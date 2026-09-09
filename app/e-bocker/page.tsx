@@ -76,7 +76,7 @@ export default function EBockerPage() {
         "Ulrikas mest omtyckta glutenfria brödrecept samlade i en e-bok. Här får du näringsrika, mättande och riktigt goda recept som är enkla att baka och passar lika bra till frukost som till middag och fest.",
       href: "/brodboken",
       image: "/baka-glutenfritt.png",
-      price: "69 kr",
+      price: "79 kr",
       format: "PDF",
       highlights: [
         "Glutenfria brödrecept",

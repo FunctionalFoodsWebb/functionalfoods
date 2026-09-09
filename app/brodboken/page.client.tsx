@@ -24,7 +24,7 @@ const DEFAULT_CONTENT = {
   shortDescription:
     "I e-boken får du en komplett samling brödrecept och smarta tips som gör det enkelt att lyckas – oavsett om du vill baka glutenfritt, fiberrikt eller proteinrikare alternativ.",
   image: "/baka-glutenfritt-omslag.png",
-  price: "69 kr",
+  price: "79 kr",
   features: [
     "En komplett brödguide med functional foods",
     "Recept för vardagsbröd, frallor & bröd till helgen",
@@ -62,7 +62,7 @@ export default function BrodbokenPage() {
   const ebook = {
     id: "brodboken-2026",
     name: "Baka Glutenfritt – E-bok av Ulrika Davidsson",
-    price: 65.09, // 69 kr inkl 6% moms = 65.09 kr exkl moms (69 / 1.06)
+    price: 74.5, // 79 kr inkl 6% moms = 74.5 kr exkl moms (79 / 1.06)
     quantity: 1,
     type: "book" as const,
     image: content.image || "/baka-glutenfritt.png",

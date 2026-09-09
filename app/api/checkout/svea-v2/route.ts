@@ -209,7 +209,7 @@ export async function POST(req: NextRequest) {
       "brodboken-2026": {
         id: "brodboken-2026",
         name: "Baka Glutenfritt – E-bok",
-        price: 65.09, // 69 kr inkl 6% moms => exkl moms
+        price: 74.5, // 79 kr inkl 6% moms => exkl moms
         type: "book",
         vatRate: 0.06,
       },
@@ -437,10 +437,20 @@ export async function POST(req: NextRequest) {
           });
           if (coupon) {
             if (!coupon.usageLimit || coupon.timesUsed < coupon.usageLimit) {
-              const applicableItems = filterCouponItems(validatedItems, coupon.applicableCourseIds);
+              const applicableItems = filterCouponItems(
+                validatedItems,
+                coupon.applicableCourseIds,
+              );
               const applicableSubtotal = applicableItems.reduce((sum, item) => {
-                const vatRate = item.vatRate || (item.type === "book" ? 0.06 : 0.25);
-                return sum + SveaCheckoutService.formatPriceToMinorUnits(item.price * (1 + vatRate)) * item.quantity;
+                const vatRate =
+                  item.vatRate || (item.type === "book" ? 0.06 : 0.25);
+                return (
+                  sum +
+                  SveaCheckoutService.formatPriceToMinorUnits(
+                    item.price * (1 + vatRate),
+                  ) *
+                    item.quantity
+                );
               }, 0);
               const couponType = String(coupon.type || "").toUpperCase();
               const isPercentage =
@@ -448,16 +458,22 @@ export async function POST(req: NextRequest) {
               const isFixed = couponType === "FIXED" || couponType === "AMOUNT";
 
               if (isPercentage) {
-                discountAmount = Math.round(applicableSubtotal * (coupon.amount / 100));
+                discountAmount = Math.round(
+                  applicableSubtotal * (coupon.amount / 100),
+                );
               } else if (isFixed) {
                 const applicableSubtotalExVat = applicableItems.reduce(
-                  (sum, item) => sum + Math.round(item.price * 100) * item.quantity,
+                  (sum, item) =>
+                    sum + Math.round(item.price * 100) * item.quantity,
                   0,
                 );
-                const vatMultiplier = applicableSubtotalExVat > 0
-                  ? applicableSubtotal / applicableSubtotalExVat
-                  : 1;
-                discountAmount = Math.round(coupon.amount * 100 * vatMultiplier);
+                const vatMultiplier =
+                  applicableSubtotalExVat > 0
+                    ? applicableSubtotal / applicableSubtotalExVat
+                    : 1;
+                discountAmount = Math.round(
+                  coupon.amount * 100 * vatMultiplier,
+                );
               }
               discountAmount = Math.min(discountAmount, applicableSubtotal);
               if (discountAmount > 0) appliedCoupon = coupon;
@@ -772,10 +788,20 @@ export async function POST(req: NextRequest) {
         if (coupon) {
           // Check usage limit
           if (!coupon.usageLimit || coupon.timesUsed < coupon.usageLimit) {
-            const applicableItems = filterCouponItems(validatedItems, coupon.applicableCourseIds);
+            const applicableItems = filterCouponItems(
+              validatedItems,
+              coupon.applicableCourseIds,
+            );
             const applicableSubtotal = applicableItems.reduce((sum, item) => {
-              const vatRate = item.vatRate || (item.type === "book" ? 0.06 : 0.25);
-              return sum + SveaCheckoutService.formatPriceToMinorUnits(item.price * (1 + vatRate)) * item.quantity;
+              const vatRate =
+                item.vatRate || (item.type === "book" ? 0.06 : 0.25);
+              return (
+                sum +
+                SveaCheckoutService.formatPriceToMinorUnits(
+                  item.price * (1 + vatRate),
+                ) *
+                  item.quantity
+              );
             }, 0);
             // subtotal är nu redan inkl. moms, så vi applicerar rabatt direkt
             const couponType = String(coupon.type || "").toUpperCase();
@@ -785,17 +811,21 @@ export async function POST(req: NextRequest) {
 
             if (isPercentage) {
               // subtotal är inkl moms i öre, räkna rabatt på det
-              discountAmount = Math.round(applicableSubtotal * (coupon.amount / 100));
+              discountAmount = Math.round(
+                applicableSubtotal * (coupon.amount / 100),
+              );
             } else if (isFixed) {
               // Fast rabatt lagras exkl. moms. Använd samma effektiva
               // momsmultiplikator som Stripe, även för e-böcker och blandade köp.
               const applicableSubtotalExVat = applicableItems.reduce(
-                (sum, item) => sum + Math.round(item.price * 100) * item.quantity,
+                (sum, item) =>
+                  sum + Math.round(item.price * 100) * item.quantity,
                 0,
               );
-              const vatMultiplier = applicableSubtotalExVat > 0
-                ? applicableSubtotal / applicableSubtotalExVat
-                : 1;
+              const vatMultiplier =
+                applicableSubtotalExVat > 0
+                  ? applicableSubtotal / applicableSubtotalExVat
+                  : 1;
               discountAmount = Math.round(coupon.amount * 100 * vatMultiplier);
             }
             discountAmount = Math.min(discountAmount, applicableSubtotal);
@@ -1396,7 +1426,8 @@ export async function POST(req: NextRequest) {
     // Store order in database
     // Calculate total amount AFTER discount (in öre, then convert to SEK)
     const totalAmountInOre = subtotal - discountAmount;
-    const totalAmount = SveaCheckoutService.formatPriceFromMinorUnits(totalAmountInOre);
+    const totalAmount =
+      SveaCheckoutService.formatPriceFromMinorUnits(totalAmountInOre);
 
     // Calculate discounted price per item (proportionally)
     // If discount is applied, distribute it proportionally across items

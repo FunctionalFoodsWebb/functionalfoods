@@ -34,7 +34,7 @@ const DEFAULT_BY_SLUG: Record<string, EbookDefaults> = {
     shortDescription:
       "I e-boken får du en komplett samling brödrecept och smarta tips som gör det enkelt att lyckas.",
     image: "/baka-glutenfritt-omslag.png",
-    price: "69 kr",
+    price: "79 kr",
     features: [
       "En komplett brödguide med functional foods",
       "Recept för vardagsbröd, frallor & bröd till helgen",

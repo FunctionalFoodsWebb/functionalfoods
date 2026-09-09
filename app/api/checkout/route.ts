@@ -126,8 +126,8 @@ export async function POST(req: NextRequest) {
         {
           id: "brodboken-2026",
           name: "Baka Glutenfritt – E-bok",
-          price: 65.09, // 69 kr inkl 6% moms => 65.09 kr exkl moms
-          basePrice: 65.09,
+          price: 74.5, // 79 kr inkl 6% moms => 74.5 kr exkl moms
+          basePrice: 74.5,
           type: "book" as const,
           vatRate: 0.06,
         },
@@ -320,7 +320,10 @@ export async function POST(req: NextRequest) {
             Array.isArray(coupon.applicableCourseIds)
               ? (coupon.applicableCourseIds as string[])
               : null;
-          const applicableItems = filterCouponItems(validatedItems, applicableIds);
+          const applicableItems = filterCouponItems(
+            validatedItems,
+            applicableIds,
+          );
           const applicableSubtotalExVat = applicableItems.reduce(
             (sum, i) => sum + Math.round(i.price * 100) * i.quantity,
             0,
@@ -332,7 +335,8 @@ export async function POST(req: NextRequest) {
           }, 0);
           const normalizedCouponType = String(coupon.type || "").toUpperCase();
           const isPercentage =
-            normalizedCouponType === "PERCENTAGE" || normalizedCouponType === "PERCENT";
+            normalizedCouponType === "PERCENTAGE" ||
+            normalizedCouponType === "PERCENT";
 
           if (applicableSubtotalGross > 0) {
             if (isPercentage) {
