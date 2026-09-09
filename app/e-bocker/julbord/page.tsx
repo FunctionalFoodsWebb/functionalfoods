@@ -18,6 +18,6 @@ export async function generateMetadata() {
   });
 }
 
-export default function PaskbokenPage() {
+export default function JulbordPage() {
   return <JulbordPageClient />;
 }
