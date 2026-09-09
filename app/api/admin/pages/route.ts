@@ -42,6 +42,12 @@ const KNOWN_PAGES = [
     path: "/e-bocker/juice-glow",
   },
   {
+    pageId: "julbord",
+    name: "Julbord E-bok",
+    description: "E-boken som säljs på /e-bocker/julbord",
+    path: "/e-bocker/julbord",
+  },
+  {
     pageId: "boken",
     name: "Functional Foods Boken",
     description: "Den fysiska boken på /boken",
