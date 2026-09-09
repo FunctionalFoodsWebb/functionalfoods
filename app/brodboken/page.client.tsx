@@ -62,7 +62,7 @@ export default function BrodbokenPage() {
   const ebook = {
     id: "brodboken-2026",
     name: "Baka Glutenfritt – E-bok av Ulrika Davidsson",
-    price: 74.5, // 79 kr inkl 6% moms = 74.5 kr exkl moms (79 / 1.06)
+    price: 74.53, // 79 kr inkl 6% moms = 74.53 kr exkl moms (79 / 1.06)
     quantity: 1,
     type: "book" as const,
     image: content.image || "/baka-glutenfritt.png",

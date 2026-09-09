@@ -209,7 +209,7 @@ export async function POST(req: NextRequest) {
       "brodboken-2026": {
         id: "brodboken-2026",
         name: "Baka Glutenfritt – E-bok",
-        price: 74.5, // 79 kr inkl 6% moms => exkl moms
+        price: 74.53, // 79 kr inkl 6% moms => exkl moms
         type: "book",
         vatRate: 0.06,
       },
