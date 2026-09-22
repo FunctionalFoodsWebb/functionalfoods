@@ -1152,19 +1152,19 @@ async function handleOrderCompleted(
                     const lastName = rest.length ? rest.join(" ") : undefined;
 
                     const purchaseTag =
-                      ebookId === "paskbuffe"
-                        ? "Köp - Påskbuffé"
-                        : ebookId === "grill-sommarmat"
-                          ? "Köp - Grill & Sommarmat"
-                          : ebookId === "sota-godsaker"
-                            ? "Köp - Sötsaker"
-                            : ebookId === "halsosamma-frukostar"
-                              ? "Köp - Hälsosamma Frukostar"
-                              : ebookId === "juice-glow"
-                                ? "Köp - Juice & Glow"
-                                   : ebookId === "soppboken"
-                                ? "Köp - Soppboken"
-                                : "Köp - Brödboken";
+                    ebookId === "paskbuffe"
+                    ? "Köp - Påskbuffé"
+                    : ebookId === "grill-sommarmat"
+                    ? "Köp - Grill & Sommarmat"
+                    : ebookId === "sota-godsaker"
+                    ? "Köp - Sötsaker"
+                    : ebookId === "halsosamma-frukostar"
+                    ? "Köp - Hälsosamma Frukostar"
+                    : ebookId === "juice-glow"
+                    ? "Köp - Juice & Glow"
+                    : ebookId === "soppboken"
+                    ? "Köp - Soppboken"
+                    : "Köp - Brödboken";
 
                     await Promise.race([
                       mailchimpMarketing.addSubscriber({
