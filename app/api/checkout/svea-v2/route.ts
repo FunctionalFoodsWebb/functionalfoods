@@ -248,6 +248,13 @@ export async function POST(req: NextRequest) {
         type: "book",
         vatRate: 0.06,
       },
+      soppboken: {
+        id: "soppboken",
+        name: "Den stora Soppboken – E-bok",
+        price: 93.4,
+        type: "book",
+        vatRate: 0.06,
+      },
     };
 
     // Add book products to productMap
@@ -710,6 +717,16 @@ export async function POST(req: NextRequest) {
       ) {
         return "EBOOK-JUICE-GLOW";
       }
+      if (
+        key.includes("den-stora-soppboken") ||
+        key.includes("stora-soppboken") ||
+        key.includes("soppboken") ||
+        key.includes("Den stora Soppboken") ||
+        key.includes("den stora soppboken") ||
+        key.includes("Stora Soppboken")
+      ) {
+        return "EBOOK-SOPPBOKEN";
+      }
 
       return item.id; // fallback
     };
@@ -1059,6 +1076,14 @@ export async function POST(req: NextRequest) {
             ) {
               ebookId = "juice-glow";
             }
+            if (
+              book.name.toLowerCase().includes("den stora Soppboken") ||
+              book.name.toLowerCase().includes("stora soppboken") ||
+              book.name.toLowerCase().includes("soppboken") ||
+              book.name.toLowerCase().includes("den-stora-soppboken")
+            ) {
+              ebookId = "soppboken";
+            }
 
             // Optional: avoid duplicates if route is retried
             const existing = await prisma.ebookDownload.findFirst({
@@ -1106,6 +1131,9 @@ export async function POST(req: NextRequest) {
             }
             if (ebookId === "juice-glow") {
               downloadUrl = `${baseUrl}/e-bocker/juice-glow/ladda-ner?token=${downloadToken}`;
+            }
+            if (ebookId === "soppboken") {
+              downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
             }
 
             await emailService.sendEbookDownloadEmail({

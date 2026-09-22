@@ -224,6 +224,7 @@ function SveaSuccessContent() {
       id.includes("grill-sommarmat") ||
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
+      id.includes("soppboken") ||
       name.includes("e-bok") ||
       name.includes("brodboken") ||
       name.includes("glutenfritt") ||
@@ -237,7 +238,10 @@ function SveaSuccessContent() {
       name.includes("halsosamma frukostar") ||
       name.includes("juice glow") ||
       name.includes("juice och glow") ||
-      name.includes("juice & glow")
+      name.includes("juice & glow") ||
+      name.includes("den stora Soppboken") ||
+      name.includes("stora soppboken") ||
+      name.includes("soppboken")
     );
   });
 
@@ -258,6 +262,7 @@ function SveaSuccessContent() {
       id.includes("grill-sommarmat") ||
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
+      id.includes("soppboken") ||
       name.includes("glutenfritt") ||
       name.includes("brodboken") ||
       name.includes("påskbuffé") ||
@@ -272,6 +277,9 @@ function SveaSuccessContent() {
       name.includes("juice glow") ||
       name.includes("juice och glow") ||
       name.includes("juice & glow") ||
+      name.includes("den stora soppboken") ||
+      name.includes("stora soppboken") ||
+      name.includes("soppboken") ||
       name.includes("e-bok")
     );
   });
@@ -305,6 +313,12 @@ function SveaSuccessContent() {
     ebookKey.includes("juice glow") ||
     ebookKey.includes("juice och glow") ||
     ebookKey.includes("juice & glow");
+
+  const isSoppboken =
+    ebookKey.includes("soppboken") ||
+    ebookKey.includes("den-stora-soppboken") ||
+    ebookKey.includes("den stora soppboken") ||
+    ebookKey.includes("stora soppboken");
 
   const ebookDisplay = isPaskbuffe
     ? {
@@ -355,15 +369,24 @@ function SveaSuccessContent() {
                 description: "Juicer, smoothies och varma kvällsdrycker",
                 enjoyTitle: "Njut av dina färgstarka juicer!",
               }
-            : {
-                title: "Baka Glutenfritt – E-bok av Ulrika Davidsson",
-                image: "/baka-glutenfritt.png",
-                alt: "Baka Glutenfritt E-bok",
-                subtitle: "PDF-format • 26 recept",
-                description:
-                  "Upptäck Ulrikas väg till mer hälsosam brödbakning.",
-                enjoyTitle: "Njut av att baka glutenfritt!",
-              };
+            : isSoppboken
+              ? {
+                  title: "Den stora Soppboken – E-bok av Ulrika Davidsson",
+                  image: "/soppboken-samlingssida.png",
+                  alt: "Den stora Soppboken E-bok",
+                  subtitle: "PDF-format • 62 recept",
+                  description: "Smakrika och färgstarka soppor",
+                  enjoyTitle: "Njut av dina smakrika soppor!",
+                }
+              : {
+                  title: "Baka Glutenfritt – E-bok av Ulrika Davidsson",
+                  image: "/baka-glutenfritt.png",
+                  alt: "Baka Glutenfritt E-bok",
+                  subtitle: "PDF-format • 26 recept",
+                  description:
+                    "Upptäck Ulrikas väg till mer hälsosam brödbakning.",
+                  enjoyTitle: "Njut av att baka glutenfritt!",
+                };
 
   console.log("SVEA SUCCESS orderDetails:", orderDetails);
   console.log("SVEA SUCCESS purchasedEbook:", purchasedEbook);
@@ -371,6 +394,7 @@ function SveaSuccessContent() {
   console.log("SVEA SUCCESS isPaskbuffe:", isPaskbuffe);
   console.log("SVEA SUCCESS isSotaGodsaker:", isSotaGodsaker);
   console.log("SVEA SUCCESS isHalsosammaFrukostar:", isHalsosammaFrukostar);
+  console.log("SVEA SUCCESS isSoppboken:", isSoppboken);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">

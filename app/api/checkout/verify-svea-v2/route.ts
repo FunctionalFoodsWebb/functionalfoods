@@ -751,6 +751,15 @@ export async function POST(req: NextRequest) {
                   ) {
                     ebookId = "juice-glow";
                   }
+                  if (
+                    n.includes("den stora soppboken") ||
+                    n.includes("den stora Soppboken") ||
+                    n.includes("soppboken") ||
+                    n.includes("stora soppboken") ||
+                    n.includes("den-stora-soppboken")
+                  ) {
+                    ebookId = "soppboken";
+                  }
 
                   await prisma.ebookDownload.create({
                     data: {
@@ -782,6 +791,9 @@ export async function POST(req: NextRequest) {
                   }
                   if (ebookId === "juice-glow") {
                     downloadUrl = `${baseUrl}/e-bocker/juice-glow/ladda-ner?token=${downloadToken}`;
+                  }
+                  if (ebookId === "soppboken") {
+                    downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
                   }
 
                   await emailService.sendEbookDownloadEmail({

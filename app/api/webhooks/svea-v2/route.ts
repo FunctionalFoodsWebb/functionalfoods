@@ -1041,6 +1041,12 @@ async function handleOrderCompleted(
                   n.includes("juice-glow")
                 ) {
                   ebookId = "juice-glow";
+                } else if (
+                  n.includes("den stora soppboken") ||
+                  n.includes("stora soppboken") ||
+                  n.includes("soppboken")
+                ) {
+                  ebookId = "soppboken";
                 }
 
                 // Reuse existing token if it already exists for this order + ebook
@@ -1094,6 +1100,9 @@ async function handleOrderCompleted(
                 }
                 if (ebookId === "juice-glow") {
                   downloadUrl = `${baseUrl}/e-bocker/juice-glow/ladda-ner?token=${downloadToken}`;
+                }
+                if (ebookId === "soppboken") {
+                  downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
                 }
 
                 await emailService.sendEbookDownloadEmail({
@@ -1154,7 +1163,9 @@ async function handleOrderCompleted(
                               ? "Köp - Hälsosamma Frukostar"
                               : ebookId === "juice-glow"
                                 ? "Köp - Juice & Glow"
-                                : "Köp - Brödboken";
+                                : ebookId === "soppboken"
+                                  ? "Köp - Den stora Soppboken"
+                                  : "Köp - Brödboken";
 
                     await Promise.race([
                       mailchimpMarketing.addSubscriber({

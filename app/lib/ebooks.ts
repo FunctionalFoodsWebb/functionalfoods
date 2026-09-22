@@ -72,6 +72,14 @@ export const EBOOK_PRODUCTS: Record<
     pdfPath: "/juice-glow-ulrika-davidsson.pdf",
     matchers: ["juice-glow", "juice glow", "juice & glow", "juice och glow"],
   },
+  soppboken: {
+    id: "soppboken",
+    name: "Den stora Soppboken – E-bok av Ulrika Davidsson",
+    priceExVat: 93.4,
+    downloadRoute: "/e-bocker/soppboken/ladda-ner",
+    pdfPath: "/den-stora-soppboken-ulrika-davidsson.pdf",
+    matchers: ["soppboken", "den stora soppboken", "stora soppboken"],
+  },
 };
 
 export function resolveEbookIdFromValue(value: unknown): string | null {

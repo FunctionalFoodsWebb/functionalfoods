@@ -187,6 +187,12 @@ class MailchimpEcommerceService {
       if (normalizedName.includes("juice") && normalizedName.includes("glow")) {
         return "juice-glow";
       }
+      if (
+        normalizedName.includes("stora") &&
+        normalizedName.includes("soppboken")
+      ) {
+        return "soppboken";
+      }
     }
 
     const rawId = item.id || item.name;
@@ -210,6 +216,7 @@ class MailchimpEcommerceService {
       "grill-sommarmat": "/grill-sommarmat-square.png",
       "halsosamma-frukostar": "/halsosamma-frukostar-square.png",
       "juice-glow": "/juice-glow-square.png",
+      soppboken: "/soppboken-square.png",
       "functional-flow": "/Kurser_bilder/Functional_Gut Health.jpg",
       "functional-basics":
         "/Kurser_bilder/Functional_Basics - Grunden i functional foods.jpg",

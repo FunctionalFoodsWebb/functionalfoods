@@ -10,6 +10,21 @@ export default function EBockerPage() {
 
   const ebooks = [
     {
+      id: "soppboken",
+      title: "Den stora Soppboken",
+      description:
+        "En inspirerande e-bok fylld med 62 goda, färgstarka och näringsrika soppor för luncher, middagar och alla dagar när du längtar efter något varmt, gott och mättande.",
+      href: "/e-bocker/soppboken",
+      image: "/soppboken-samlingssida.png",
+      price: "99 kr",
+      format: "PDF",
+      highlights: [
+        "62 recept på färgstarka, goda och mättande soppor",
+        "Hälsosamma bröd och tillbehör som passar till",
+        "Tips på hur du enkelt får mer grönsaker och variation i vardagen",
+      ],
+    },
+    {
       id: "juice-glow",
       title: "Juice & Glow",
       description:
