@@ -93,6 +93,17 @@ const EBOOK_CONFIG: Record<
     description:
       "Digital e-bok med halsosamma frukostar, recept och inspiration for en battre start pa dagen.",
   },
+  "juice-glow": {
+    slug: "e-bocker/juice-glow",
+    image: "/juice-glow-square.png",
+    description:
+      "Digital e-bok med färgstarka juicer, smoothies och varma drycker.",
+  },
+  soppboken: {
+    slug: "e-bocker/soppboken",
+    image: "/soppboken-square.png",
+    description: "Digital e-bok med smakrika soppor.",
+  },
 };
 
 function getSiteUrl() {

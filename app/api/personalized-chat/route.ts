@@ -64,6 +64,7 @@ async function getCourseInfo() {
       grillSommarmatResponse,
       halsosammaFrukostarResponse,
       juiceGlowResponse,
+      soppbokenResponse,
     ] = await Promise.all([
       fetch(`${baseUrl}/functionalbasics.txt`, { cache: "no-store" }),
       fetch(`${baseUrl}/functionalflow.txt`, { cache: "no-store" }),
@@ -75,6 +76,7 @@ async function getCourseInfo() {
       fetch(`${baseUrl}/grill-sommarmat.txt`, { cache: "no-store" }),
       fetch(`${baseUrl}/halsosamma-frukostar.txt`, { cache: "no-store" }),
       fetch(`${baseUrl}/juice-glow.txt`, { cache: "no-store" }),
+      fetch(`${baseUrl}/soppboken.txt`, { cache: "no-store" }),
     ]);
 
     if (
@@ -87,7 +89,8 @@ async function getCourseInfo() {
       !sotaGodsakerResponse.ok ||
       !grillSommarmatResponse.ok ||
       !halsosammaFrukostarResponse.ok ||
-      !juiceGlowResponse.ok
+      !juiceGlowResponse.ok ||
+      !soppbokenResponse.ok
     ) {
       console.error("Failed to load course info:", {
         basics: basicsResponse.status,
@@ -100,6 +103,7 @@ async function getCourseInfo() {
         grillSommarmat: grillSommarmatResponse.status,
         halsosammaFrukostar: halsosammaFrukostarResponse.status,
         juiceGlow: juiceGlowResponse.status,
+        soppboken: soppbokenResponse.status,
       });
       return {
         basicsText: "",
@@ -112,6 +116,7 @@ async function getCourseInfo() {
         grillSommarmatText: "",
         halsosammaFrukostarText: "",
         juiceGlowText: "",
+        soppbokenText: "",
       };
     }
 
@@ -125,6 +130,7 @@ async function getCourseInfo() {
     const grillSommarmatText = await grillSommarmatResponse.text();
     const halsosammaFrukostarText = await halsosammaFrukostarResponse.text();
     const juiceGlowText = await juiceGlowResponse.text();
+    const soppbokenText = await soppbokenResponse.text();
 
     return {
       basicsText,
@@ -137,6 +143,7 @@ async function getCourseInfo() {
       grillSommarmatText,
       halsosammaFrukostarText,
       juiceGlowText,
+      soppbokenText,
     };
   } catch (error) {
     console.error("Error loading course info:", error);
@@ -151,6 +158,7 @@ async function getCourseInfo() {
       grillSommarmatText: "",
       halsosammaFrukostarText: "",
       juiceGlowText: "",
+      soppbokenText: "",
     };
   }
 }
@@ -450,6 +458,7 @@ ${user.chatMessages
       grillSommarmatText,
       halsosammaFrukostarText,
       juiceGlowText,
+      soppbokenText,
     } = await getCourseInfo();
     const { recipes, rawMaterials } = await getRecipesAndRawMaterials();
 
@@ -487,6 +496,7 @@ Söta godsaker: ${sotaGodsakerText.substring(0, 500)}...
 Grill- & Sommarmat: ${grillSommarmatText.substring(0, 500)}...
 Hälsosamma Frukostar: ${halsosammaFrukostarText.substring(0, 500)}...
 Juice & Glow: ${juiceGlowText.substring(0, 500)}...
+Den stora Soppboken: ${soppbokenText.substring(0, 500)}...
 
 VÅRA RECEPT (${recipes.length} tillgängliga):
 ${recipes

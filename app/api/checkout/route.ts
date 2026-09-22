@@ -171,6 +171,14 @@ export async function POST(req: NextRequest) {
           type: "book" as const,
           vatRate: 0.06,
         },
+        {
+          id: "soppboken",
+          name: "Den stora Soppboken – E-bok av Ulrika Davidsson",
+          price: 93.4,
+          basePrice: 93.4,
+          type: "book" as const,
+          vatRate: 0.06,
+        },
       ];
 
       // Add book products to map

@@ -54,6 +54,7 @@ const getItemImage = (item: {
   if (item.id === "halsosamma-frukostar")
     return "/halsosamma-frukostar-square.png";
   if (item.id === "juice-glow") return "/juice-glow-square.png";
+  if (item.id === "soppboken") return "/soppboken-square.png";
 
   if (item.image) return item.image;
   if (courseImages[item.id]) return courseImages[item.id];
@@ -756,9 +757,13 @@ export default function CartPage() {
                     0,
                   );
 
-                  const discountableItems = appliedCoupon?.appliesTo === "all"
-                    ? campaignItems
-                    : filterCouponItems(campaignItems, appliedCoupon?.appliesTo);
+                  const discountableItems =
+                    appliedCoupon?.appliesTo === "all"
+                      ? campaignItems
+                      : filterCouponItems(
+                          campaignItems,
+                          appliedCoupon?.appliesTo,
+                        );
                   const discountableBookSubtotal = discountableItems
                     .filter((item) => item.type === "book")
                     .reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -767,12 +772,14 @@ export default function CartPage() {
                     .reduce((sum, item) => sum + item.price * item.quantity, 0);
                   const discountableSubtotal =
                     discountableBookSubtotal + discountableCourseSubtotal;
-                  const bookDiscountRatio = discountableSubtotal > 0
-                    ? discountableBookSubtotal / discountableSubtotal
-                    : 0;
-                  const courseDiscountRatio = discountableSubtotal > 0
-                    ? discountableCourseSubtotal / discountableSubtotal
-                    : 0;
+                  const bookDiscountRatio =
+                    discountableSubtotal > 0
+                      ? discountableBookSubtotal / discountableSubtotal
+                      : 0;
+                  const courseDiscountRatio =
+                    discountableSubtotal > 0
+                      ? discountableCourseSubtotal / discountableSubtotal
+                      : 0;
 
                   const bookTaxableBase = Math.max(
                     0,
@@ -792,8 +799,7 @@ export default function CartPage() {
 
                   const totalInclVat =
                     Math.round(
-                      (Math.max(0, subtotalExVat - discount) + vatAmount) *
-                        100,
+                      (Math.max(0, subtotalExVat - discount) + vatAmount) * 100,
                     ) / 100;
 
                   const vatLabel =
@@ -816,12 +822,18 @@ export default function CartPage() {
 
                       {discount > 0 && (
                         <div className="flex justify-between text-xs sm:text-sm">
-                          <span className="text-[#93C560]">Rabatt (exkl. moms)</span>
+                          <span className="text-[#93C560]">
+                            Rabatt (exkl. moms)
+                          </span>
                           <span className="text-[#93C560] whitespace-nowrap">
-                            -{discount.toLocaleString("sv-SE", {
-                              minimumFractionDigits: Number.isInteger(discount) ? 0 : 2,
+                            -
+                            {discount.toLocaleString("sv-SE", {
+                              minimumFractionDigits: Number.isInteger(discount)
+                                ? 0
+                                : 2,
                               maximumFractionDigits: 2,
-                            })} kr
+                            })}{" "}
+                            kr
                           </span>
                         </div>
                       )}
@@ -841,9 +853,14 @@ export default function CartPage() {
                         <span className="text-[#014421]">Totalt</span>
                         <span className="text-[#014421] text-lg sm:text-2xl">
                           {totalInclVat.toLocaleString("sv-SE", {
-                            minimumFractionDigits: Number.isInteger(totalInclVat) ? 0 : 2,
+                            minimumFractionDigits: Number.isInteger(
+                              totalInclVat,
+                            )
+                              ? 0
+                              : 2,
                             maximumFractionDigits: 2,
-                          })} kr
+                          })}{" "}
+                          kr
                         </span>
                       </div>
                     </>

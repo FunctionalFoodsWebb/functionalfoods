@@ -214,6 +214,8 @@ function CheckoutSuccessContent() {
       id.includes("sota-godsaker") ||
       id.includes("grill-sommarmat") ||
       id.includes("halsosamma-frukostar") ||
+      id.includes("juice-glow") ||
+      id.includes("soppboken") ||
       name.includes("glutenfritt") ||
       name.includes("brodboken") ||
       name.includes("påskbuffé") ||
@@ -228,6 +230,9 @@ function CheckoutSuccessContent() {
       name.includes("juice glow") ||
       name.includes("juice och glow") ||
       name.includes("juice & glow") ||
+      name.includes("den stora Soppboken") ||
+      name.includes("stora soppboken") ||
+      name.includes("soppboken") ||
       name.includes("e-bok")
     );
   });
@@ -246,6 +251,8 @@ function CheckoutSuccessContent() {
       id.includes("sota-godsaker") ||
       id.includes("grill-sommarmat") ||
       id.includes("halsosamma-frukostar") ||
+      id.includes("juice-glow") ||
+      id.includes("soppboken") ||
       name.includes("glutenfritt") ||
       name.includes("brodboken") ||
       name.includes("påskbuffé") ||
@@ -260,6 +267,9 @@ function CheckoutSuccessContent() {
       name.includes("juice glow") ||
       name.includes("juice och glow") ||
       name.includes("juice & glow") ||
+      name.includes("den stora Soppboken") ||
+      name.includes("stora soppboken") ||
+      name.includes("soppboken") ||
       name.includes("e-bok")
     );
   });
@@ -293,6 +303,12 @@ function CheckoutSuccessContent() {
     ebookKey.includes("juice glow") ||
     ebookKey.includes("juice och glow") ||
     ebookKey.includes("juice & glow");
+
+  const isSoppboken =
+    ebookKey.includes("den-stora-soppboken") ||
+    ebookKey.includes("soppboken") ||
+    ebookKey.includes("den stora Soppboken") ||
+    ebookKey.includes("stora soppboken");
 
   const ebookDisplay = isPaskbuffe
     ? {
@@ -343,15 +359,24 @@ function CheckoutSuccessContent() {
                 description: "Juicer, smoothies och varma kvällsdrycker",
                 enjoyTitle: "Njut av dina färgstarka juicer!",
               }
-            : {
-                title: "Baka Glutenfritt – E-bok",
-                image: "/baka-glutenfritt.png",
-                alt: "Baka Glutenfritt E-bok",
-                subtitle: "PDF-format • 26 recept",
-                description:
-                  "Upptäck Ulrikas väg till mer hälsosam brödbakning.",
-                enjoyTitle: "Njut av glutenfritt!",
-              };
+            : isSoppboken
+              ? {
+                  title: "Den stora Soppboken – E-bok",
+                  image: "/soppboken-samlingssida.png",
+                  alt: "Den stora Soppboken E-bok",
+                  subtitle: "PDF-format • 62 recept",
+                  description: "Smakrika och färgstarka soppor",
+                  enjoyTitle: "Njut av dina smakrika soppor!",
+                }
+              : {
+                  title: "Baka Glutenfritt – E-bok",
+                  image: "/baka-glutenfritt.png",
+                  alt: "Baka Glutenfritt E-bok",
+                  subtitle: "PDF-format • 26 recept",
+                  description:
+                    "Upptäck Ulrikas väg till mer hälsosam brödbakning.",
+                  enjoyTitle: "Njut av glutenfritt!",
+                };
 
   // E-book only purchase - show special confirmation
   if (onlyEbooks) {

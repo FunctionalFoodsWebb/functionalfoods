@@ -1042,6 +1042,11 @@ async function handleOrderCompleted(
                 ) {
                   ebookId = "juice-glow";
                 }
+                else if (
+                  n.includes("den stora soppboken") ||
+                  n.includes("stora soppboken") ||
+                  n.includes("soppboken")
+                ) {
 
                 // Reuse existing token if it already exists for this order + ebook
                 let existingDownload = await prisma.ebookDownload.findFirst({
@@ -1094,6 +1099,9 @@ async function handleOrderCompleted(
                 }
                 if (ebookId === "juice-glow") {
                   downloadUrl = `${baseUrl}/e-bocker/juice-glow/ladda-ner?token=${downloadToken}`;
+                }
+                 if (ebookId === "soppboken") {
+                  downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
                 }
 
                 await emailService.sendEbookDownloadEmail({
@@ -1154,6 +1162,8 @@ async function handleOrderCompleted(
                               ? "Köp - Hälsosamma Frukostar"
                               : ebookId === "juice-glow"
                                 ? "Köp - Juice & Glow"
+                                   : ebookId === "soppboken"
+                                ? "Köp - Soppboken"
                                 : "Köp - Brödboken";
 
                     await Promise.race([
