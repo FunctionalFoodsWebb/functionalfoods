@@ -1041,12 +1041,13 @@ async function handleOrderCompleted(
                   n.includes("juice-glow")
                 ) {
                   ebookId = "juice-glow";
-                }
-                else if (
+                } else if (
                   n.includes("den stora soppboken") ||
                   n.includes("stora soppboken") ||
                   n.includes("soppboken")
                 ) {
+                  ebookId = "soppboken";
+                }
 
                 // Reuse existing token if it already exists for this order + ebook
                 let existingDownload = await prisma.ebookDownload.findFirst({
@@ -1100,7 +1101,7 @@ async function handleOrderCompleted(
                 if (ebookId === "juice-glow") {
                   downloadUrl = `${baseUrl}/e-bocker/juice-glow/ladda-ner?token=${downloadToken}`;
                 }
-                 if (ebookId === "soppboken") {
+                if (ebookId === "soppboken") {
                   downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
                 }
 
@@ -1152,19 +1153,19 @@ async function handleOrderCompleted(
                     const lastName = rest.length ? rest.join(" ") : undefined;
 
                     const purchaseTag =
-                    ebookId === "paskbuffe"
-                    ? "Köp - Påskbuffé"
-                    : ebookId === "grill-sommarmat"
-                    ? "Köp - Grill & Sommarmat"
-                    : ebookId === "sota-godsaker"
-                    ? "Köp - Sötsaker"
-                    : ebookId === "halsosamma-frukostar"
-                    ? "Köp - Hälsosamma Frukostar"
-                    : ebookId === "juice-glow"
-                    ? "Köp - Juice & Glow"
-                    : ebookId === "soppboken"
-                    ? "Köp - Soppboken"
-                    : "Köp - Brödboken";
+                      ebookId === "paskbuffe"
+                        ? "Köp - Påskbuffé"
+                        : ebookId === "grill-sommarmat"
+                          ? "Köp - Grill & Sommarmat"
+                          : ebookId === "sota-godsaker"
+                            ? "Köp - Sötsaker"
+                            : ebookId === "halsosamma-frukostar"
+                              ? "Köp - Hälsosamma Frukostar"
+                              : ebookId === "juice-glow"
+                                ? "Köp - Juice & Glow"
+                                : ebookId === "soppboken"
+                                  ? "Köp - Soppboken"
+                                  : "Köp - Brödboken";
 
                     await Promise.race([
                       mailchimpMarketing.addSubscriber({
