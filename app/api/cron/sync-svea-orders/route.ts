@@ -434,7 +434,7 @@ async function completeOrder(order: any, sveaOrder: any) {
                     : ebookId === "juice-glow"
                       ? "Köp - Juice & Glow"
                       : ebookId === "soppboken"
-                        ? "Köp - Soppboken"
+                        ? "Köp - Den stora Soppboken"
                         : "Köp - Brödboken";
 
           await Promise.race([

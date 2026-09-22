@@ -405,7 +405,7 @@ export async function POST(request: NextRequest) {
                           : downloadRecord.ebookId === "juice-glow"
                             ? "Köp - Juice & Glow"
                             : downloadRecord.ebookId === "soppboken"
-                              ? "Köp - Soppboken"
+                              ? "Köp - Den stora Soppboken"
                               : "Köp - Brödboken";
 
                 await Promise.race([

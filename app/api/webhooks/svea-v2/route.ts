@@ -1164,7 +1164,7 @@ async function handleOrderCompleted(
                               : ebookId === "juice-glow"
                                 ? "Köp - Juice & Glow"
                                 : ebookId === "soppboken"
-                                  ? "Köp - Soppboken"
+                                  ? "Köp - Den stora Soppboken"
                                   : "Köp - Brödboken";
 
                     await Promise.race([
