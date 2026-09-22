@@ -157,7 +157,7 @@ export default function ProvaPaPopup({
                 </div>
 
                 {/* CTA */}
-                <Link href="/e-bocker/juice-glow" onClick={handleCampaignClick}>
+                <Link href="/e-bocker/soppboken" onClick={handleCampaignClick}>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -225,7 +225,7 @@ export function ProvaPaFloatingButton({ onClick }: { onClick: () => void }) {
       {/* Mobile version */}
       <span className="sm:hidden flex items-center gap-2 px-4 py-3 font-semibold text-sm">
         <Sparkles className="w-4 h-4" />
-        Juice & Glow
+        Den stora Soppboken
       </span>
     </motion.button>
   );
