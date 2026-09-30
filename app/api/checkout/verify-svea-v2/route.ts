@@ -707,115 +707,6 @@ export async function POST(req: NextRequest) {
               );
 
               // --- E-book download email (inside same scope as updatedOrder/emailToUse/baseUrl/bookItems) ---
-              if (bookItems.length > 0) {
-                const crypto = await import("crypto");
-                const baseUrl =
-                  process.env.NEXT_PUBLIC_BASE_URL ||
-                  "https://www.functionalfoods.se";
-
-                for (const book of bookItems) {
-                  const downloadToken = crypto
-                    .randomBytes(16)
-                    .toString("hex")
-                    .toUpperCase();
-
-                  let ebookId = "brodboken-2026";
-                  const n = book.name.toLowerCase();
-                  if (n.includes("brodboken") || n.includes("brodbok")) {
-                    ebookId = "brodboken-2026";
-                  }
-                  if (n.includes("påskbuffé") || n.includes("paskbuffe")) {
-                    ebookId = "paskbuffe";
-                  }
-                  if (
-                    n.includes("söta godsaker") ||
-                    n.includes("sota godsaker") ||
-                    n.includes("sota-godsaker")
-                  ) {
-                    ebookId = "sota-godsaker";
-                  }
-                  if (
-                    n.includes("grill- & sommarmat") ||
-                    n.includes("grill sommarmat") ||
-                    n.includes("grill och sommarmat") ||
-                    n.includes("grill-sommarmat")
-                  ) {
-                    ebookId = "grill-sommarmat";
-                  }
-                  if (
-                    n.includes("hälsosamma frukostar") ||
-                    n.includes("halsosamma frukostar") ||
-                    n.includes("halsosamma-frukostar")
-                  ) {
-                    ebookId = "halsosamma-frukostar";
-                  }
-                  if (
-                    n.includes("juice & glow") ||
-                    n.includes("juice glow") ||
-                    n.includes("juice och glow") ||
-                    n.includes("juice-glow")
-                  ) {
-                    ebookId = "juice-glow";
-                  }
-                  if (
-                    n.includes("den stora soppboken") ||
-                    n.includes("den stora Soppboken") ||
-                    n.includes("soppboken") ||
-                    n.includes("stora soppboken") ||
-                    n.includes("den-stora-soppboken")
-                  ) {
-                    ebookId = "soppboken";
-                  }
-
-                  await prisma.ebookDownload.create({
-                    data: {
-                      token: downloadToken,
-                      orderNumber: updatedOrder.orderNumber,
-                      customerEmail: emailToUse,
-                      ebookId,
-                      ebookName: book.name,
-                      maxDownloads: 5,
-                      expiresAt: new Date(
-                        Date.now() + 365 * 24 * 60 * 60 * 1000,
-                      ),
-                    },
-                  });
-
-                  let downloadUrl = `${baseUrl}/brodboken/ladda-ner?token=${downloadToken}`;
-
-                  if (ebookId === "paskbuffe") {
-                    downloadUrl = `${baseUrl}/e-bocker/paskbuffe/ladda-ner?token=${downloadToken}`;
-                  }
-                  if (ebookId === "sota-godsaker") {
-                    downloadUrl = `${baseUrl}/e-bocker/sota-godsaker/ladda-ner?token=${downloadToken}`;
-                  }
-                  if (ebookId === "grill-sommarmat") {
-                    downloadUrl = `${baseUrl}/e-bocker/grill-sommarmat/ladda-ner?token=${downloadToken}`;
-                  }
-                  if (ebookId === "halsosamma-frukostar") {
-                    downloadUrl = `${baseUrl}/e-bocker/halsosamma-frukostar/ladda-ner?token=${downloadToken}`;
-                  }
-                  if (ebookId === "juice-glow") {
-                    downloadUrl = `${baseUrl}/e-bocker/juice-glow/ladda-ner?token=${downloadToken}`;
-                  }
-                  if (ebookId === "soppboken") {
-                    downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
-                  }
-
-                  await emailService.sendEbookDownloadEmail({
-                    email: emailToUse,
-                    name: nameToUse,
-                    ebookName: book.name,
-                    downloadUrl,
-                    downloadPassword: downloadToken,
-                    orderNumber: updatedOrder.orderNumber,
-                  });
-
-                  console.log(
-                    `✅ E-book download email sent for: ${book.name} with token: ${downloadToken.substring(0, 8)}...`,
-                  );
-                }
-              }
 
               const emailCourses = courseItems.map((item) => ({
                 name: item.name,
@@ -835,6 +726,122 @@ export async function POST(req: NextRequest) {
                 const baseUrl =
                   process.env.NEXT_PUBLIC_BASE_URL ||
                   "https://www.functionalfoods.se";
+
+                if (bookItems.length > 0) {
+                  const crypto = await import("crypto");
+
+                  for (const book of bookItems) {
+                    let ebookId = "brodboken-2026";
+                    const n = book.name.toLowerCase();
+
+                    if (
+                      n.includes("söta godsaker") ||
+                      n.includes("sota godsaker") ||
+                      n.includes("sota-godsaker")
+                    ) {
+                      ebookId = "sota-godsaker";
+                    } else if (
+                      n.includes("grill- & sommarmat") ||
+                      n.includes("grill sommarmat") ||
+                      n.includes("grill och sommarmat") ||
+                      n.includes("grill-sommarmat")
+                    ) {
+                      ebookId = "grill-sommarmat";
+                    } else if (
+                      n.includes("påskbuffé") ||
+                      n.includes("paskbuffe")
+                    ) {
+                      ebookId = "paskbuffe";
+                    } else if (
+                      n.includes("brodboken") ||
+                      n.includes("brodbok") ||
+                      n.includes("glutenfritt")
+                    ) {
+                      ebookId = "brodboken-2026";
+                    } else if (
+                      n.includes("hälsosamma frukostar") ||
+                      n.includes("halsosamma frukostar") ||
+                      n.includes("halsosamma-frukostar")
+                    ) {
+                      ebookId = "halsosamma-frukostar";
+                    } else if (
+                      n.includes("juice & glow") ||
+                      n.includes("juice glow") ||
+                      n.includes("juice och glow") ||
+                      n.includes("juice-glow")
+                    ) {
+                      ebookId = "juice-glow";
+                    } else if (
+                      n.includes("den stora soppboken") ||
+                      n.includes("stora soppboken") ||
+                      n.includes("soppboken")
+                    ) {
+                      ebookId = "soppboken";
+                    }
+
+                    // Reuse token if webhook/another completion path already created one
+                    let existingDownload = await prisma.ebookDownload.findFirst(
+                      {
+                        where: {
+                          orderNumber: updatedOrder.orderNumber,
+                          ebookId,
+                        },
+                      },
+                    );
+
+                    let downloadToken = existingDownload?.token;
+
+                    if (!downloadToken) {
+                      downloadToken = crypto
+                        .randomBytes(16)
+                        .toString("hex")
+                        .toUpperCase();
+
+                      await prisma.ebookDownload.create({
+                        data: {
+                          token: downloadToken,
+                          orderNumber: updatedOrder.orderNumber,
+                          customerEmail: emailToUse,
+                          ebookId,
+                          ebookName: book.name,
+                          maxDownloads: 5,
+                          expiresAt: new Date(
+                            Date.now() + 365 * 24 * 60 * 60 * 1000,
+                          ),
+                        },
+                      });
+                    }
+
+                    let downloadUrl = `${baseUrl}/brodboken/ladda-ner?token=${downloadToken}`;
+
+                    if (ebookId === "paskbuffe") {
+                      downloadUrl = `${baseUrl}/e-bocker/paskbuffe/ladda-ner?token=${downloadToken}`;
+                    } else if (ebookId === "sota-godsaker") {
+                      downloadUrl = `${baseUrl}/e-bocker/sota-godsaker/ladda-ner?token=${downloadToken}`;
+                    } else if (ebookId === "grill-sommarmat") {
+                      downloadUrl = `${baseUrl}/e-bocker/grill-sommarmat/ladda-ner?token=${downloadToken}`;
+                    } else if (ebookId === "halsosamma-frukostar") {
+                      downloadUrl = `${baseUrl}/e-bocker/halsosamma-frukostar/ladda-ner?token=${downloadToken}`;
+                    } else if (ebookId === "juice-glow") {
+                      downloadUrl = `${baseUrl}/e-bocker/juice-glow/ladda-ner?token=${downloadToken}`;
+                    } else if (ebookId === "soppboken") {
+                      downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
+                    }
+
+                    await emailService.sendEbookDownloadEmail({
+                      email: emailToUse,
+                      name: nameToUse,
+                      ebookName: book.name,
+                      downloadUrl,
+                      downloadPassword: downloadToken,
+                      orderNumber: updatedOrder.orderNumber,
+                    });
+
+                    console.log(
+                      `✅ E-book download email sent via verify for: ${book.name} (${ebookId})`,
+                    );
+                  }
+                }
 
                 if (courseItems.length > 0) {
                   await emailService.sendOrderConfirmation({
