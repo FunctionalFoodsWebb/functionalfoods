@@ -8,6 +8,10 @@ import {
   SUMMER_EBOOK_CAMPAIGN_ID,
   SUMMER_EBOOK_CAMPAIGN_TAG,
 } from "@/app/lib/campaigns/summer-ebooks";
+import {
+  AUTUMN_EBOOK_CAMPAIGN_ID,
+  AUTUMN_EBOOK_CAMPAIGN_TAG,
+} from "@/app/lib/campaigns/autumn-ebooks";
 
 const prisma = new PrismaClient();
 
@@ -416,9 +420,11 @@ export async function POST(request: NextRequest) {
                     tags: [
                       "kund",
                       purchaseTag,
-                      ...(freshMetadata?.campaignId === SUMMER_EBOOK_CAMPAIGN_ID
-                        ? [SUMMER_EBOOK_CAMPAIGN_TAG]
-                        : []),
+                      ...(freshMetadata?.campaignId === AUTUMN_EBOOK_CAMPAIGN_ID
+                        ? [AUTUMN_EBOOK_CAMPAIGN_TAG]
+                        : freshMetadata?.campaignId === SUMMER_EBOOK_CAMPAIGN_ID
+                          ? [SUMMER_EBOOK_CAMPAIGN_TAG]
+                          : []),
                     ],
                     status: "subscribed",
                   }),

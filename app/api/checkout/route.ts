@@ -7,6 +7,13 @@ import {
   isSummerEbookCampaignId,
   SUMMER_EBOOK_CAMPAIGN_ID,
 } from "@/app/lib/campaigns/summer-ebooks";
+import {
+  applyAutumnEbookBundlePricing,
+  hasAutumnEbookBundleByIdentity,
+  isAutumnEbookCampaignId,
+  AUTUMN_EBOOK_CAMPAIGN_ACTIVE,
+  AUTUMN_EBOOK_CAMPAIGN_ID,
+} from "@/app/lib/campaigns/autumn-ebooks";
 import { getCourseEffectivePrice } from "@/app/lib/course-pricing";
 import { filterCouponItems } from "@/app/lib/coupon-applicability";
 import bcrypt from "bcryptjs";
@@ -261,8 +268,13 @@ export async function POST(req: NextRequest) {
 
         const matchingPendingOrder = recentPendingOrders.find((order) => {
           const metadata = (order.metadata as any) || {};
+
+          const isKnownEbookCampaign =
+            isAutumnEbookCampaignId(metadata.campaignId) ||
+            isSummerEbookCampaignId(metadata.campaignId);
+
           return (
-            isSummerEbookCampaignId(metadata.campaignId) &&
+            isKnownEbookCampaign &&
             !metadata.recoveredByOrderId &&
             hasSameCartItems(metadata.items)
           );
@@ -275,20 +287,27 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      const effectiveCampaignId =
-        campaignId ||
-        inheritedCampaignMetadata?.campaignId ||
-        (hasSummerEbookBundleByIdentity(validatedItems)
+      const hasValidAutumnBundle =
+        AUTUMN_EBOOK_CAMPAIGN_ACTIVE &&
+        hasAutumnEbookBundleByIdentity(validatedItems);
+
+      const effectiveCampaignId = hasValidAutumnBundle
+        ? AUTUMN_EBOOK_CAMPAIGN_ID
+        : isSummerEbookCampaignId(
+              campaignId || inheritedCampaignMetadata?.campaignId,
+            ) || hasSummerEbookBundleByIdentity(validatedItems)
           ? SUMMER_EBOOK_CAMPAIGN_ID
-          : undefined);
+          : undefined;
       const effectiveCampaignSource =
         campaignSource || inheritedCampaignMetadata?.campaignSource || null;
       const effectiveAttribution =
         attribution || inheritedCampaignMetadata?.attribution || null;
 
-      const pricedItems = isSummerEbookCampaignId(effectiveCampaignId)
-        ? applySummerEbookBundlePricing(validatedItems)
-        : validatedItems;
+      const pricedItems = isAutumnEbookCampaignId(effectiveCampaignId)
+        ? applyAutumnEbookBundlePricing(validatedItems)
+        : isSummerEbookCampaignId(effectiveCampaignId)
+          ? applySummerEbookBundlePricing(validatedItems)
+          : validatedItems;
 
       // --- END SECURITY FIX ---
 

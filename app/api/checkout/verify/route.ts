@@ -12,6 +12,12 @@ import {
   SUMMER_EBOOK_CAMPAIGN_TAG,
   hasSummerEbookBundleByIdentity,
 } from "@/app/lib/campaigns/summer-ebooks";
+import {
+  AUTUMN_EBOOK_CAMPAIGN_ACTIVE,
+  AUTUMN_EBOOK_CAMPAIGN_ID,
+  AUTUMN_EBOOK_CAMPAIGN_TAG,
+  hasAutumnEbookBundleByIdentity,
+} from "@/app/lib/campaigns/autumn-ebooks";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +44,10 @@ function normalizeStripeMetadataItem(item: any) {
   };
 }
 
-async function ensureStripeCourseConfirmationEmail(order: any, fallbackEmail?: string | null) {
+async function ensureStripeCourseConfirmationEmail(
+  order: any,
+  fallbackEmail?: string | null,
+) {
   const metadata = (order?.metadata as any) || {};
   if (metadata.confirmationEmailSent) {
     console.log("ℹ️ Stripe order confirmation email already sent (skipping):", {
@@ -48,9 +57,16 @@ async function ensureStripeCourseConfirmationEmail(order: any, fallbackEmail?: s
     return;
   }
 
-  const courseItems = (order?.items || []).filter((item: any) => item.type === "course");
-  const emailToUse = order?.user?.email || order?.customerEmail || fallbackEmail;
-  if (courseItems.length === 0 || !emailToUse || emailToUse.startsWith("guest-")) {
+  const courseItems = (order?.items || []).filter(
+    (item: any) => item.type === "course",
+  );
+  const emailToUse =
+    order?.user?.email || order?.customerEmail || fallbackEmail;
+  if (
+    courseItems.length === 0 ||
+    !emailToUse ||
+    emailToUse.startsWith("guest-")
+  ) {
     return;
   }
 
@@ -467,8 +483,7 @@ export async function GET(req: NextRequest) {
                     session.metadata?.addrevenue_channelId || "",
                   addrevenue_advertiserId:
                     session.metadata?.addrevenue_advertiserId || "",
-                  addrevenue_market:
-                    session.metadata?.addrevenue_market || "",
+                  addrevenue_market: session.metadata?.addrevenue_market || "",
                   addrevenue_clickRef:
                     session.metadata?.addrevenue_clickRef || "",
                 },
@@ -489,7 +504,7 @@ export async function GET(req: NextRequest) {
               },
             },
           });
-          
+
           // If order already exists but payment is missing, create payment as fallback
           try {
             await prisma.payment.create({
@@ -516,16 +531,34 @@ export async function GET(req: NextRequest) {
           const updatedOrder = await findOrder(true);
 
           if (updatedOrder) {
-            await ensureStripeCourseConfirmationEmail(updatedOrder, customerEmail);
-            
+            await ensureStripeCourseConfirmationEmail(
+              updatedOrder,
+              customerEmail,
+            );
+
             let metadata = (updatedOrder.metadata as any) || {};
+
+            const hasAutumnBundle =
+              AUTUMN_EBOOK_CAMPAIGN_ACTIVE &&
+              hasAutumnEbookBundleByIdentity(updatedOrder.items);
+
+            const hasSummerBundle = hasSummerEbookBundleByIdentity(
+              updatedOrder.items,
+            );
+
+            const detectedCampaignId = hasAutumnBundle
+              ? AUTUMN_EBOOK_CAMPAIGN_ID
+              : hasSummerBundle
+                ? SUMMER_EBOOK_CAMPAIGN_ID
+                : undefined;
+
             if (
-              metadata.campaignId !== SUMMER_EBOOK_CAMPAIGN_ID &&
-              hasSummerEbookBundleByIdentity(updatedOrder.items)
+              detectedCampaignId &&
+              metadata.campaignId !== detectedCampaignId
             ) {
               metadata = {
                 ...metadata,
-                campaignId: SUMMER_EBOOK_CAMPAIGN_ID,
+                campaignId: detectedCampaignId,
                 campaignSource:
                   metadata.campaignSource ||
                   session.metadata?.campaignSource ||
@@ -570,9 +603,11 @@ export async function GET(req: NextRequest) {
                   productNames,
                   firstName,
                   lastName,
-                  metadata.campaignId === SUMMER_EBOOK_CAMPAIGN_ID
-                    ? [SUMMER_EBOOK_CAMPAIGN_TAG]
-                    : [],
+                  metadata.campaignId === AUTUMN_EBOOK_CAMPAIGN_ID
+                    ? [AUTUMN_EBOOK_CAMPAIGN_TAG]
+                    : metadata.campaignId === SUMMER_EBOOK_CAMPAIGN_ID
+                      ? [SUMMER_EBOOK_CAMPAIGN_TAG]
+                      : [],
                 );
 
                 const recoveredTaggedAt =
@@ -727,8 +762,7 @@ export async function GET(req: NextRequest) {
                 where: { id: metadata.recoveredFromOrderId },
                 select: { id: true, metadata: true },
               });
-              const recoveredMetadata =
-                (recoveredOrder?.metadata as any) || {};
+              const recoveredMetadata = (recoveredOrder?.metadata as any) || {};
 
               if (recoveredOrder && !recoveredMetadata.mailchimpCartDeletedAt) {
                 await mc.deleteCart(
@@ -805,7 +839,8 @@ export async function GET(req: NextRequest) {
                 orderNumber: order.orderNumber,
                 customerEmail: emailToUse,
                 ebookId,
-                ebookName: book.name || EBOOK_PRODUCTS[ebookId]?.name || "E-bok",
+                ebookName:
+                  book.name || EBOOK_PRODUCTS[ebookId]?.name || "E-bok",
                 maxDownloads: 5,
                 expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
               },

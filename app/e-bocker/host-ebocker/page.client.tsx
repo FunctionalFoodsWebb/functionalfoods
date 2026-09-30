@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "../../context/CartContext";
 import {
@@ -14,105 +14,83 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { trackAddToCart, trackViewContent } from "@/app/lib/analytics";
-import { SUMMER_EBOOK_PRODUCTS } from "@/app/lib/campaigns/summer-ebooks";
 import {
   AUTUMN_EBOOK_PRODUCTS,
   storeAutumnEbookCampaignSource,
 } from "@/app/lib/campaigns/autumn-ebooks";
 
-type EbookDefaults = {
-  id: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  shortDescription: string;
-  image: string;
-  price: string;
-  features: string[];
-  authorSection: string;
+const DEFAULT_CONTENT = {
+  title: "HÖSTKAMPANJ",
+  subtitle: "Gäller oktober ut.",
+  description:
+    "Gör hösten godare med tre e-böcker fyllda med näringsrika frukostar, färgstarka soppor, juicer och värmande drycker.",
+  shortDescription: "Hitta nya favoriter för höstens alla dagar!",
+  image: "/host-bokbundle-omslag.png",
+  price: "250 kr",
+  features: ["Den stora Soppboken", "Juice & Glow", "Hälsosamma Frukostar"],
+  authorSection:
+    "Ulrika Davidsson är kostrådgivare, receptkreatör och bästsäljande författare till över 40 böcker. Hennes online-kurser har hjälpt tiotusentals personer att finna en mer hållbar och hälsosam livsstil.",
 };
 
-type PageContent = Partial<EbookDefaults>;
-
-function parsePriceToExVat(priceText: string): number {
-  const num = Number(
-    (priceText || "").replace(/[^\d.,]/g, "").replace(",", "."),
-  );
-  if (!Number.isFinite(num) || num <= 0) return 0;
-  return Number((num / 1.06).toFixed(2));
+interface PageContent {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  shortDescription?: string;
+  image?: string;
+  price?: string;
+  features?: string[];
+  authorSection?: string;
 }
 
-export default function EbookSlugPageClient({
-  slug,
-  fallback,
-}: {
-  slug: string;
-  fallback: EbookDefaults;
-}) {
+export default function AutumnEbooksPageClient() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
-  const [pageContent, setPageContent] = useState<PageContent>({});
+  const [pageContent, setPageContent] = useState<PageContent>(DEFAULT_CONTENT);
   const { addItem } = useCart();
   const router = useRouter();
 
-  const content = { ...fallback, ...pageContent };
-  const priceExVat = useMemo(
-    () => parsePriceToExVat(content.price || fallback.price),
-    [content.price, fallback.price],
-  );
-
-  const ebook = {
-    id: fallback.id || slug,
-    name: `${content.title} – ${content.subtitle}`,
-    price: priceExVat,
-    quantity: 1,
-    type: "book" as const,
-    image: content.image || fallback.image,
-  };
+  const content = { ...DEFAULT_CONTENT, ...pageContent };
 
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const response = await fetch(`/api/pages/${slug}`);
-        if (!response.ok) return;
-        const data = await response.json();
-        if (data.content) setPageContent(data.content);
+        const response = await fetch("/api/pages/host-ebocker");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.content) setPageContent(data.content);
+        }
       } catch (error) {
-        console.error("Failed to fetch e-book page content:", error);
+        console.error("Failed to fetch page content:", error);
       }
     };
+
     fetchContent();
-  }, [slug]);
+  }, []);
 
   useEffect(() => {
     try {
       trackViewContent(
-        { id: ebook.id, name: ebook.name, price: ebook.price },
+        {
+          id: "host-ebocker",
+          name: "Höstkampanj – 3 e-böcker",
+          price: 250 / 1.06,
+        },
         "SEK",
       );
     } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAddToCart = async () => {
     setIsAdding(true);
 
-    const isAutumnBundle = fallback.id === "host-ebocker";
+    storeAutumnEbookCampaignSource("product-page");
 
-    const productsToAdd = isAutumnBundle
-      ? AUTUMN_EBOOK_PRODUCTS
-      : fallback.id === "sommar-bokbundle"
-        ? SUMMER_EBOOK_PRODUCTS
-        : [ebook];
+    AUTUMN_EBOOK_PRODUCTS.forEach((product) => {
+      addItem(product);
 
-    if (isAutumnBundle) {
-      storeAutumnEbookCampaignSource("product-page");
-    }
-
-    productsToAdd.forEach((product) => addItem(product));
-    try {
-      productsToAdd.forEach((product) => {
+      try {
         trackAddToCart(
           {
             id: product.id,
@@ -122,10 +100,11 @@ export default function EbookSlugPageClient({
           },
           "SEK",
         );
-      });
-    } catch {}
+      } catch {}
+    });
 
     setAdded(true);
+
     setTimeout(() => {
       setIsAdding(false);
       router.push("/cart");
@@ -133,7 +112,8 @@ export default function EbookSlugPageClient({
   };
 
   const featureIcons = [ChefHat, BookOpen, Leaf, Sparkles, ChefHat, BookOpen];
-  const features = (content.features || fallback.features || []).map(
+
+  const features = (content.features || DEFAULT_CONTENT.features).map(
     (text, index) => ({
       icon: featureIcons[index % featureIcons.length],
       text,
@@ -147,6 +127,26 @@ export default function EbookSlugPageClient({
         <div className="absolute top-40 right-20 w-48 h-48 bg-emerald-400/10 rounded-full blur-3xl" />
         <div className="absolute bottom-40 left-1/4 w-40 h-40 bg-lime-300/10 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-10 w-36 h-36 bg-teal-300/10 rounded-full blur-3xl" />
+
+        {[...Array(14)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-white/10 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -12, 0],
+              opacity: [0.08, 0.18, 0.08],
+            }}
+            transition={{
+              duration: 4 + Math.random() * 3,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-12 md:py-20">
@@ -157,7 +157,9 @@ export default function EbookSlugPageClient({
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#93C560]/15 rounded-full border border-[#93C560]/30 mb-4">
             <BookOpen className="w-4 h-4 text-[#93C560]" />
-            <span className="text-[#cfe8b0] text-sm font-medium">Ny E-bok</span>
+            <span className="text-[#cfe8b0] text-sm font-medium">
+              Höstkampanj
+            </span>
           </div>
         </motion.div>
 
@@ -170,12 +172,15 @@ export default function EbookSlugPageClient({
           >
             <div className="relative group">
               <div className="absolute -inset-4 bg-gradient-to-r from-[#93C560]/20 via-emerald-400/15 to-lime-300/15 rounded-3xl blur-2xl opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+
               <div className="relative">
                 <div
-                  className={`transition-all duration-700 ${imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+                  className={`transition-all duration-700 ${
+                    imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"
+                  }`}
                 >
                   <Image
-                    src={content.image || fallback.image}
+                    src={content.image || "/host-bokbundle-square.png"}
                     alt={`${content.title} – ${content.subtitle}`}
                     width={400}
                     height={500}
@@ -184,10 +189,12 @@ export default function EbookSlugPageClient({
                     priority
                   />
                 </div>
+
                 {!imageLoaded && (
                   <div className="absolute inset-0 bg-white/10 rounded-2xl animate-pulse w-[400px] h-[500px]" />
                 )}
-                <div className="absolute -top-4 -right-4 bg-[#FF7E70] text-[#FFFFFF] px-4 py-2 rounded-full font-bold text-lg shadow-lg transform rotate-12">
+
+                <div className="absolute -top-4 -right-4 bg-[#FF7E70] text-white px-4 py-2 rounded-full font-bold text-lg shadow-lg transform rotate-12">
                   {content.price}
                 </div>
               </div>
@@ -206,9 +213,11 @@ export default function EbookSlugPageClient({
                 {content.subtitle}
               </span>
             </h1>
+
             <p className="text-gray-300 text-lg leading-relaxed">
               {content.description}
             </p>
+
             <p className="text-gray-300 leading-relaxed">
               {content.shortDescription}
             </p>
@@ -243,7 +252,7 @@ export default function EbookSlugPageClient({
                 {added ? (
                   <>
                     <Check className="w-5 h-5" />
-                    Tillagd i varukorgen!
+                    Tillagda i varukorgen!
                   </>
                 ) : isAdding ? (
                   <>
@@ -253,20 +262,71 @@ export default function EbookSlugPageClient({
                 ) : (
                   <>
                     <ShoppingCart className="w-5 h-5" />
-                    {fallback.id === "host-ebocker"
-                      ? `Köp alla 3 – ${content.price}`
-                      : `Köp E-bok – ${content.price}`}
+                    Köp 3 e-böcker – {content.price}
                   </>
                 )}
               </motion.button>
+
               <p className="text-gray-300 text-sm">
-                {fallback.id === "host-ebocker"
-                  ? "E-böckerna skickas direkt till din e-post efter köp"
-                  : "E-boken skickas direkt till din e-post efter köp"}
+                E-böckerna skickas direkt till din e-post efter köp. Ord pris
+                327 kr.
               </p>
             </div>
           </motion.div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mt-20 text-center"
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">
+            Du får:
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <div className="w-12 h-12 bg-[#93C560]/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <ChefHat className="w-6 h-6 text-[#93C560]" />
+              </div>
+              <h3 className="text-white font-semibold mb-2">
+                Den stora Soppboken
+              </h3>
+              <p className="text-gray-300 text-sm">
+                62 goda, färgstarka och näringsrika soppor för luncher, middagar
+                och alla dagar när du längtar efter något varmt.
+              </p>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <div className="w-12 h-12 bg-emerald-400/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="w-6 h-6 text-emerald-300" />
+              </div>
+              <h3 className="text-white font-semibold mb-2">Juice & Glow</h3>
+              <p className="text-gray-300 text-sm">
+                41 recept på juicer, smoothies och varma kvällsdrycker. Här får
+                du följa med på en 3–5 dagars juicekur och samtidigt upptäcka
+                hur enkelt och gott juicing kan bli en härlig del av din
+                hälsosamma livsstil.
+              </p>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <div className="w-12 h-12 bg-lime-300/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Leaf className="w-6 h-6 text-lime-200" />
+              </div>
+              <h3 className="text-white font-semibold mb-2">
+                Hälsosamma Frukostar
+              </h3>
+              <p className="text-gray-300 text-sm">
+                67 inspirerande recept på allt från chiapuddingar, yoghurtskålar
+                och smoothies till proteinrika äggrätter, hembakade frallor,
+                gröter, pannkakor och plättar.
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -278,6 +338,7 @@ export default function EbookSlugPageClient({
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#93C560] to-[#014421] flex items-center justify-center flex-shrink-0">
               <ChefHat className="w-10 h-10 text-white" />
             </div>
+
             <div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 Om Ulrika Davidsson

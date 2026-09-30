@@ -1,7 +1,10 @@
 import { prisma } from "@/app/lib/database";
 import { EBOOK_PRODUCTS } from "@/app/lib/ebooks";
 import { getCourseDisplayPricing } from "@/app/lib/course-pricing";
-import { SUMMER_EBOOK_BUNDLE_GROSS_PRICE } from "@/app/lib/campaigns/summer-ebooks";
+import {
+  AUTUMN_EBOOK_BUNDLE_GROSS_PRICE,
+  AUTUMN_EBOOK_CAMPAIGN_ACTIVE,
+} from "@/app/lib/campaigns/autumn-ebooks";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -205,16 +208,20 @@ function getEbookFeedItems(): FeedItem[] {
 
   return [
     ...ebookItems,
-    {
-      id: "sommar-bokbundle",
-      title: "Sommarkampanj - 3 e-bocker for 250 kr",
-      description:
-        "Digitalt bokpaket med Grill- & Sommarmat, Sota Godsaker och Baka Glutenfritt till kampanjpris.",
-      link: absoluteUrl("/e-bocker/sommar-bokbundle"),
-      imageLink: absoluteUrl("/grill-sommarmat-square.png"),
-      price: SUMMER_EBOOK_BUNDLE_GROSS_PRICE,
-      productType: "E-bokspaket",
-    },
+    ...(AUTUMN_EBOOK_CAMPAIGN_ACTIVE
+      ? [
+          {
+            id: "host-ebocker-2026",
+            title: "Höstkampanj - 3 e-böcker för 250 kr",
+            description:
+              "Digitalt bokpaket med Den stora Soppboken, Juice & Glow och Hälsosamma Frukostar till kampanjpris.",
+            link: absoluteUrl("/e-bocker/host-ebocker"),
+            imageLink: absoluteUrl("/soppboken-square.png"),
+            price: AUTUMN_EBOOK_BUNDLE_GROSS_PRICE,
+            productType: "E-bokspaket",
+          },
+        ]
+      : []),
   ];
 }
 

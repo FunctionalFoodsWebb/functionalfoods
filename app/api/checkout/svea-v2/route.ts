@@ -7,11 +7,11 @@ import {
 import { emailService } from "@/app/lib/email";
 import { getMailchimpMarketing } from "@/app/lib/mailchimp-marketing";
 import {
-  applySummerEbookBundlePricing,
-  isSummerEbookCampaignId,
-  SUMMER_EBOOK_CAMPAIGN_ID,
-  SUMMER_EBOOK_CAMPAIGN_TAG,
-} from "@/app/lib/campaigns/summer-ebooks";
+  applyAutumnEbookBundlePricing,
+  isAutumnEbookCampaignId,
+  AUTUMN_EBOOK_CAMPAIGN_ID,
+  AUTUMN_EBOOK_CAMPAIGN_TAG,
+} from "@/app/lib/campaigns/autumn-ebooks";
 import { filterCouponItems } from "@/app/lib/coupon-applicability";
 import { getCourseEffectivePrice } from "@/app/lib/course-pricing";
 import bcrypt from "bcryptjs";
@@ -356,12 +356,12 @@ export async function POST(req: NextRequest) {
       "🔍 VALIDATED ITEMS DEBUG:",
       JSON.stringify(validatedItems, null, 2),
     );
-    if (isSummerEbookCampaignId(campaignId)) {
-      const pricedItems = applySummerEbookBundlePricing(validatedItems);
+    if (isAutumnEbookCampaignId(campaignId)) {
+      const pricedItems = applyAutumnEbookBundlePricing(validatedItems);
       validatedItems.length = 0;
       validatedItems.push(...pricedItems);
       console.log(
-        "☀️ SUMMER EBOOK CAMPAIGN ITEMS:",
+        "🍂 AUTUMN EBOOK CAMPAIGN ITEMS:",
         JSON.stringify(validatedItems, null, 2),
       );
     }
@@ -1206,8 +1206,8 @@ export async function POST(req: NextRequest) {
             productNames,
             firstName,
             lastName,
-            campaignId === SUMMER_EBOOK_CAMPAIGN_ID
-              ? [SUMMER_EBOOK_CAMPAIGN_TAG]
+            campaignId === AUTUMN_EBOOK_CAMPAIGN_ID
+              ? [AUTUMN_EBOOK_CAMPAIGN_TAG]
               : [],
           );
           console.log(
