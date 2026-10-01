@@ -4,11 +4,30 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, BookOpen, Tag, ShoppingCart } from "lucide-react";
 import { useCart } from "@/app/context/CartContext";
+import {
+  AUTUMN_EBOOK_PRODUCTS,
+  storeAutumnEbookCampaignSource,
+} from "@/app/lib/campaigns/autumn-ebooks";
 
 export default function EBockerPage() {
   const { addItem } = useCart();
 
   const ebooks = [
+    {
+      id: "host-ebocker",
+      title: "Höstkampanj - 3 e-böcker för 250 kr",
+      description:
+        "Fyll hösten med värmande soppor, näringsrika frukostar och färgstarka juicer. Just nu får du Den stora Soppboken, Juice & Glow och Hälsosamma Frukostar för endast 250 kr.",
+      href: "/e-bocker/host-ebocker",
+      image: "/host-bokbundle-samlingssida.png",
+      price: "250 kr",
+      format: "PDF",
+      highlights: [
+        "Den stora Soppboken",
+        "Juice & Glow",
+        "Hälsosamma Frukostar",
+      ],
+    },
     {
       id: "soppboken",
       title: "Den stora Soppboken",
@@ -122,19 +141,24 @@ export default function EBockerPage() {
     image: string;
     price: string;
   }) => {
+    if (ebook.id === "host-ebocker") {
+      storeAutumnEbookCampaignSource("product-page");
+
+      AUTUMN_EBOOK_PRODUCTS.forEach((product) => {
+        addItem(product);
+      });
+
+      return;
+    }
+
     const numericPrice = Number(
       ebook.price.replace(" kr", "").replace(",", "."),
     );
     const priceExVat = +(numericPrice / 1.06).toFixed(2);
 
-    const productName =
-      ebook.id === "sommar-bokbundle"
-        ? "Sommarerbjudande – Bokbundle av Ulrika Davidsson"
-        : `${ebook.title} – E-bok av Ulrika Davidsson`;
-
     addItem({
       id: ebook.id,
-      name: productName,
+      name: `${ebook.title} – E-bok av Ulrika Davidsson`,
       price: priceExVat,
       quantity: 1,
       type: "book",

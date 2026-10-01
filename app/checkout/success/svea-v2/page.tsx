@@ -249,6 +249,11 @@ function SveaSuccessContent() {
     (item: any) => item.productType === "course",
   );
   const onlyEbooks = hasEbooks && !hasCourses;
+  const purchasedEbooks =
+    orderDetails?.items?.filter((item: any) => item.productType === "book") ||
+    [];
+
+  const hasMultipleEbooks = purchasedEbooks.length > 1;
 
   const purchasedEbook = orderDetails?.items?.find((item: any) => {
     const id = item.productId?.toLowerCase?.() || "";
@@ -407,12 +412,16 @@ function SveaSuccessContent() {
           {onlyEbooks ? (
             <>
               <p className="text-xl text-gray-600 mb-4">
-                Din e-bok är på väg till din inkorg!
+                {hasMultipleEbooks
+                  ? "Dina e-böcker är på väg till din inkorg!"
+                  : "Din e-bok är på väg till din inkorg!"}
               </p>
 
               <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
                 <Mail className="w-4 h-4" />
-                Kolla din e-post för nerladdningslänken
+                {hasMultipleEbooks
+                  ? "Kolla din e-post för nerladdningslänkarna"
+                  : "Kolla din e-post för nerladdningslänken"}
               </div>
             </>
           ) : (
@@ -566,9 +575,19 @@ function SveaSuccessContent() {
                     📧 E-post på väg
                   </h3>
                   <p className="text-gray-600 text-sm">
-                    Ett mejl med din personliga nerladdningslänk skickas till{" "}
-                    <strong>{orderDetails?.customerEmail}</strong>. Det kan ta
-                    upp till 30 minuter innan mejlet når dig.
+                    {hasMultipleEbooks ? (
+                      <>
+                        Separata mejl med dina personliga nerladdningslänkar
+                        skickas till{" "}
+                        <strong>{orderDetails?.customerEmail}</strong>.
+                      </>
+                    ) : (
+                      <>
+                        Ett mejl med din personliga nerladdningslänk skickas
+                        till <strong>{orderDetails?.customerEmail}</strong>.
+                      </>
+                    )}{" "}
+                    Det kan ta upp till 30 minuter innan mejlet når dig.
                   </p>
                 </div>
               </div>
@@ -580,11 +599,15 @@ function SveaSuccessContent() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">
-                    📥 Ladda ner din e-bok
+                    {hasMultipleEbooks
+                      ? "📥 Ladda ner dina e-böcker"
+                      : "📥 Ladda ner din e-bok"}
                   </h3>
+
                   <p className="text-gray-600 text-sm mb-2">
-                    Klicka på länken i mejlet för att ladda ner din e-bok som
-                    PDF. Länken är unik för dig och fungerar i 30 dagar.
+                    {hasMultipleEbooks
+                      ? "Klicka på länkarna i mejlen för att ladda ner dina e-böcker som PDF."
+                      : "Klicka på länken i mejlet för att ladda ner din e-bok som PDF."}
                   </p>
                 </div>
               </div>
@@ -596,10 +619,15 @@ function SveaSuccessContent() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">
-                    {ebookDisplay.enjoyTitle}
+                    {hasMultipleEbooks
+                      ? "Njut av dina nya e-böcker!"
+                      : ebookDisplay.enjoyTitle}
                   </h3>
+
                   <p className="text-gray-600 text-sm mb-3">
-                    {ebookDisplay.description}
+                    {hasMultipleEbooks
+                      ? "Upptäck alla recept och all inspiration i dina nya e-böcker."
+                      : ebookDisplay.description}
                   </p>
                 </div>
               </div>
@@ -619,20 +647,42 @@ function SveaSuccessContent() {
                 <div className="flex items-center gap-4">
                   <div className="relative w-20 h-28 rounded-lg overflow-hidden shadow-lg flex-shrink-0">
                     <Image
-                      src={ebookDisplay.image}
-                      alt={ebookDisplay.alt}
+                      src={
+                        hasMultipleEbooks
+                          ? "/host-bokbundle-square.png"
+                          : ebookDisplay.image
+                      }
+                      alt={
+                        hasMultipleEbooks
+                          ? "Höstkampanj – 3 e-böcker"
+                          : ebookDisplay.alt
+                      }
                       fill
                       className="object-cover"
                     />
                   </div>
+
                   <div>
-                    <h4 className="font-semibold text-gray-900">Din e-bok</h4>
-                    <p className="text-sm text-gray-600">
-                      {ebookDisplay.title}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {ebookDisplay.subtitle}
-                    </p>
+                    <h4 className="font-semibold text-gray-900">
+                      {hasMultipleEbooks ? "Dina e-böcker" : "Din e-bok"}
+                    </h4>
+
+                    {hasMultipleEbooks ? (
+                      <div className="mt-1 space-y-1 text-sm text-gray-600">
+                        <p>Den stora Soppboken</p>
+                        <p>Juice & Glow</p>
+                        <p>Hälsosamma Frukostar</p>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm text-gray-600">
+                          {ebookDisplay.title}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {ebookDisplay.subtitle}
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

@@ -10,6 +10,10 @@ import {
   SUMMER_EBOOK_CAMPAIGN_ID,
   SUMMER_EBOOK_CAMPAIGN_TAG,
 } from "@/app/lib/campaigns/summer-ebooks";
+import {
+  AUTUMN_EBOOK_CAMPAIGN_ID,
+  AUTUMN_EBOOK_CAMPAIGN_TAG,
+} from "@/app/lib/campaigns/autumn-ebooks";
 import { sendAddrevenuePostbackForOrder } from "@/app/lib/addrevenue";
 import bcrypt from "bcryptjs";
 
@@ -470,9 +474,12 @@ async function handleOrderCompleted(
                 courseNames,
                 firstName,
                 lastName,
-                (order.metadata as any)?.campaignId === SUMMER_EBOOK_CAMPAIGN_ID
-                  ? [SUMMER_EBOOK_CAMPAIGN_TAG]
-                  : [],
+                (order.metadata as any)?.campaignId === AUTUMN_EBOOK_CAMPAIGN_ID
+                  ? [AUTUMN_EBOOK_CAMPAIGN_TAG]
+                  : (order.metadata as any)?.campaignId ===
+                      SUMMER_EBOOK_CAMPAIGN_ID
+                    ? [SUMMER_EBOOK_CAMPAIGN_TAG]
+                    : [],
               );
               console.log(
                 `✅ New customer added to Mailchimp with course tags: ${normalizedEmail}`,
@@ -1176,9 +1183,12 @@ async function handleOrderCompleted(
                           "kund",
                           purchaseTag,
                           ...((metadata as any)?.campaignId ===
-                          SUMMER_EBOOK_CAMPAIGN_ID
-                            ? [SUMMER_EBOOK_CAMPAIGN_TAG]
-                            : []),
+                          AUTUMN_EBOOK_CAMPAIGN_ID
+                            ? [AUTUMN_EBOOK_CAMPAIGN_TAG]
+                            : (metadata as any)?.campaignId ===
+                                SUMMER_EBOOK_CAMPAIGN_ID
+                              ? [SUMMER_EBOOK_CAMPAIGN_TAG]
+                              : []),
                         ],
                         status: "subscribed",
                       }),

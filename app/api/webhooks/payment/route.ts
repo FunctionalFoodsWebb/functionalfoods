@@ -14,6 +14,12 @@ import {
   SUMMER_EBOOK_CAMPAIGN_TAG,
   hasSummerEbookBundleByIdentity,
 } from "@/app/lib/campaigns/summer-ebooks";
+import {
+  AUTUMN_EBOOK_CAMPAIGN_ACTIVE,
+  AUTUMN_EBOOK_CAMPAIGN_ID,
+  AUTUMN_EBOOK_CAMPAIGN_TAG,
+  hasAutumnEbookBundleByIdentity,
+} from "@/app/lib/campaigns/autumn-ebooks";
 import { sendAddrevenuePostbackForOrder } from "@/app/lib/addrevenue";
 
 export const dynamic = "force-dynamic";
@@ -380,28 +386,38 @@ async function findStripeOrder(session: any, includeRelations = false) {
 
   return prisma.order.findFirst({
     where: {
-      OR: [
-        { checkoutOrderId: session.id },
-        { orderNumber: legacyOrderNumber },
-      ],
+      OR: [{ checkoutOrderId: session.id }, { orderNumber: legacyOrderNumber }],
     },
     include,
   });
 }
 
-async function ensureStripeCourseConfirmationEmail(order: any, fallbackEmail?: string | null) {
+async function ensureStripeCourseConfirmationEmail(
+  order: any,
+  fallbackEmail?: string | null,
+) {
   const metadata = (order?.metadata as any) || {};
   if (metadata.confirmationEmailSent) {
-    console.log("ℹ️ Stripe webhook: confirmation email already sent (skipping):", {
-      orderId: order?.id,
-      orderNumber: order?.orderNumber,
-    });
+    console.log(
+      "ℹ️ Stripe webhook: confirmation email already sent (skipping):",
+      {
+        orderId: order?.id,
+        orderNumber: order?.orderNumber,
+      },
+    );
     return;
   }
 
-  const courseItems = (order?.items || []).filter((item: any) => item.type === "course");
-  const emailToUse = order?.user?.email || order?.customerEmail || fallbackEmail;
-  if (courseItems.length === 0 || !emailToUse || emailToUse.startsWith("guest-")) {
+  const courseItems = (order?.items || []).filter(
+    (item: any) => item.type === "course",
+  );
+  const emailToUse =
+    order?.user?.email || order?.customerEmail || fallbackEmail;
+  if (
+    courseItems.length === 0 ||
+    !emailToUse ||
+    emailToUse.startsWith("guest-")
+  ) {
     return;
   }
 
@@ -435,7 +451,9 @@ async function ensureStripeCourseConfirmationEmail(order: any, fallbackEmail?: s
     },
   });
 
-  console.log(`✅ Stripe webhook: confirmation email ensured for ${emailToUse}`);
+  console.log(
+    `✅ Stripe webhook: confirmation email ensured for ${emailToUse}`,
+  );
 }
 
 async function handleCheckoutSessionCompleted(session: any) {
@@ -539,7 +557,10 @@ async function handleCheckoutSessionCompleted(session: any) {
             return {
               id: normalized.id,
               name:
-                normalized.name || li.description || li.price?.product || "Kurs",
+                normalized.name ||
+                li.description ||
+                li.price?.product ||
+                "Kurs",
               price: (li.amount_total || li.amount_subtotal || 0) / 100,
               quantity: li.quantity || 1,
               type: normalized.type,
@@ -568,8 +589,7 @@ async function handleCheckoutSessionCompleted(session: any) {
       utm_content: session.metadata?.utm_content || "",
       addrevenue_clickId: session.metadata?.addrevenue_clickId || "",
       addrevenue_channelId: session.metadata?.addrevenue_channelId || "",
-      addrevenue_advertiserId:
-        session.metadata?.addrevenue_advertiserId || "",
+      addrevenue_advertiserId: session.metadata?.addrevenue_advertiserId || "",
       addrevenue_market: session.metadata?.addrevenue_market || "",
       addrevenue_clickRef: session.metadata?.addrevenue_clickRef || "",
     };
@@ -846,7 +866,8 @@ async function handleCheckoutSessionCompleted(session: any) {
                 await emailService.sendEbookDownloadEmail({
                   email: user.email,
                   name: user.name || user.email,
-                  ebookName: book.name || EBOOK_PRODUCTS[ebookId]?.name || "E-bok",
+                  ebookName:
+                    book.name || EBOOK_PRODUCTS[ebookId]?.name || "E-bok",
                   downloadUrl: buildEbookDownloadUrl(
                     baseUrl,
                     ebookId,
@@ -935,13 +956,23 @@ async function handleCheckoutSessionCompleted(session: any) {
     );
 
     const finalMetadata = (finalOrder.metadata as any) || {};
-    if (
-      finalMetadata.campaignId !== SUMMER_EBOOK_CAMPAIGN_ID &&
-      hasSummerEbookBundleByIdentity(finalOrder.items)
-    ) {
+
+    const hasAutumnBundle =
+      AUTUMN_EBOOK_CAMPAIGN_ACTIVE &&
+      hasAutumnEbookBundleByIdentity(finalOrder.items);
+
+    const hasSummerBundle = hasSummerEbookBundleByIdentity(finalOrder.items);
+
+    const detectedCampaignId = hasAutumnBundle
+      ? AUTUMN_EBOOK_CAMPAIGN_ID
+      : hasSummerBundle
+        ? SUMMER_EBOOK_CAMPAIGN_ID
+        : undefined;
+
+    if (detectedCampaignId && finalMetadata.campaignId !== detectedCampaignId) {
       const detectedMetadata = {
         ...finalMetadata,
-        campaignId: SUMMER_EBOOK_CAMPAIGN_ID,
+        campaignId: detectedCampaignId,
         campaignSource:
           finalMetadata.campaignSource ||
           session.metadata?.campaignSource ||
@@ -985,14 +1016,15 @@ async function handleCheckoutSessionCompleted(session: any) {
           productNames,
           firstName,
           lastName,
-          metadata.campaignId === SUMMER_EBOOK_CAMPAIGN_ID
-            ? [SUMMER_EBOOK_CAMPAIGN_TAG]
-            : [],
+          metadata.campaignId === AUTUMN_EBOOK_CAMPAIGN_ID
+            ? [AUTUMN_EBOOK_CAMPAIGN_TAG]
+            : metadata.campaignId === SUMMER_EBOOK_CAMPAIGN_ID
+              ? [SUMMER_EBOOK_CAMPAIGN_TAG]
+              : [],
         );
 
         const recoveredTaggedAt =
-          metadata.recoveredFromOrderId &&
-          !metadata.mailchimpRecoveredTaggedAt
+          metadata.recoveredFromOrderId && !metadata.mailchimpRecoveredTaggedAt
             ? new Date().toISOString()
             : metadata.mailchimpRecoveredTaggedAt;
 
@@ -1137,9 +1169,7 @@ async function handleCheckoutSessionCompleted(session: any) {
         });
 
         await mailchimpEcommerce.deleteCart(
-          metadata.mailchimpCartId ||
-            finalOrder.orderNumber ||
-            finalOrder.id,
+          metadata.mailchimpCartId || finalOrder.orderNumber || finalOrder.id,
         );
 
         await prisma.order.update({
@@ -1227,8 +1257,7 @@ async function handleCheckoutSessionCompleted(session: any) {
             where: { id: metadata.recoveredFromOrderId },
             select: { id: true, metadata: true },
           });
-          const recoveredMetadata =
-            (recoveredOrder?.metadata as any) || {};
+          const recoveredMetadata = (recoveredOrder?.metadata as any) || {};
 
           if (recoveredOrder && !recoveredMetadata.mailchimpCartDeletedAt) {
             await mailchimpEcommerce.deleteCart(
@@ -1243,8 +1272,7 @@ async function handleCheckoutSessionCompleted(session: any) {
                   ...recoveredMetadata,
                   recoveredByOrderId: refreshedOrder.id,
                   recoveredAt:
-                    recoveredMetadata.recoveredAt ||
-                    new Date().toISOString(),
+                    recoveredMetadata.recoveredAt || new Date().toISOString(),
                   recoveryReason: "abandoned_cart_recovered",
                   mailchimpCartDeletedAt: new Date().toISOString(),
                 },
@@ -1258,7 +1286,7 @@ async function handleCheckoutSessionCompleted(session: any) {
         "⚠️ Stripe webhook: Mailchimp cart cleanup failed (non-critical):",
         cleanupError,
       );
-    }    
+    }
   } catch (error) {
     console.error("Failed to handle checkout.session.completed:", error);
   }
@@ -1360,7 +1388,7 @@ async function handleFreeOrder(session: any) {
               stripeSessionId: session.id,
             },
           },
-        include: { items: true },
+          include: { items: true },
         });
       } else {
         // Legacy fallback: create order with session ID in orderNumber for idempotency
@@ -1565,8 +1593,7 @@ async function handleFreeOrder(session: any) {
               where: { id: completedMetadata.recoveredFromOrderId },
               select: { id: true, metadata: true },
             });
-            const recoveredMetadata =
-              (recoveredOrder?.metadata as any) || {};
+            const recoveredMetadata = (recoveredOrder?.metadata as any) || {};
 
             if (recoveredOrder && !recoveredMetadata.mailchimpCartDeletedAt) {
               await mailchimpEcommerce.deleteCart(
@@ -1581,8 +1608,7 @@ async function handleFreeOrder(session: any) {
                     ...recoveredMetadata,
                     recoveredByOrderId: completedOrder.id,
                     recoveredAt:
-                      recoveredMetadata.recoveredAt ||
-                      new Date().toISOString(),
+                      recoveredMetadata.recoveredAt || new Date().toISOString(),
                     recoveryReason: "abandoned_cart_recovered",
                     mailchimpCartDeletedAt: new Date().toISOString(),
                   },

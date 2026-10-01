@@ -117,6 +117,24 @@ const DEFAULT_BY_SLUG: Record<string, EbookDefaults> = {
     authorSection:
       "Ulrika Davidsson är kostrådgivare, receptkreatör och bästsäljande författare till över 40 böcker.",
   },
+  "host-ebocker": {
+    id: "host-ebocker",
+    title: "Höstkampanj",
+    subtitle: "3 e-böcker för endast 250 kr",
+    description:
+      "Fyll hösten med värmande soppor, näringsrika frukostar och färgstarka juicer. Under en begränsad tid får du tre inspirerande e-böcker av Ulrika Davidsson till ett extra förmånligt pris.",
+    shortDescription:
+      "Erbjudandet innehåller Den stora Soppboken, Juice & Glow och Hälsosamma Frukostar. Alla böcker levereras digitalt så att du kan börja använda recepten direkt.",
+    image: "/host-bokbundle-square.png",
+    price: "250 kr",
+    features: [
+      "Den stora Soppboken – smakrika och värmande soppor för höstens måltider",
+      "Juice & Glow – Juicer, smoothies och varma drycker",
+      "Hälsosamma Frukostar – inspiration till goda och näringsrika frukostar",
+    ],
+    authorSection:
+      "Ulrika Davidsson är kostrådgivare, receptkreatör och bästsäljande författare till över 40 böcker.",
+  },
   "sommar-bokbundle": {
     id: "sommar-bokbundle",
     title: "Sommarkampanj",

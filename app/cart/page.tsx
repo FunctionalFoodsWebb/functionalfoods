@@ -22,16 +22,16 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { trackAddToCart, trackViewContent } from "@/app/lib/analytics";
+import { SUMMER_EBOOK_PRODUCTS } from "@/app/lib/campaigns/summer-ebooks";
 import {
-  SUMMER_EBOOK_CAMPAIGN_ACTIVE,
-  SUMMER_EBOOK_CAMPAIGN_ID,
-  SUMMER_EBOOK_PRODUCTS,
-  applySummerEbookBundlePricing,
-  getMissingSummerEbookProducts,
-  hasSummerEbookBundle,
-  isSummerEbookTriggerBook,
-  storeSummerEbookCampaignSource,
-} from "@/app/lib/campaigns/summer-ebooks";
+  AUTUMN_EBOOK_CAMPAIGN_ACTIVE,
+  AUTUMN_EBOOK_CAMPAIGN_ID,
+  AUTUMN_EBOOK_PRODUCTS,
+  applyAutumnEbookBundlePricing,
+  getMissingAutumnEbookProducts,
+  hasAutumnEbookBundle,
+  storeAutumnEbookCampaignSource,
+} from "@/app/lib/campaigns/autumn-ebooks";
 import { filterCouponItems } from "@/app/lib/coupon-applicability";
 
 const courseImages: Record<string, string> = {
@@ -61,21 +61,13 @@ const getItemImage = (item: {
   return "/images/blog-placeholder.jpg";
 };
 
-const HEALTHY_BREAKFAST_UPSELL = {
-  id: "halsosamma-frukostar",
-  name: "Hälsosamma Frukostar – E-bok av Ulrika Davidsson",
-  price: 93.4,
+const GLUTEN_FREE_UPSELL = {
+  id: "brodboken-2026",
+  name: "Baka Glutenfritt – E-bok av Ulrika Davidsson",
+  price: 74.53,
   quantity: 1,
   type: "book" as const,
-  image: "/halsosamma-frukostar-square.png",
-};
-const JUICE_GLOW_UPSELL = {
-  id: "juice-glow",
-  name: "Juice & Glow – E-bok av Ulrika Davidsson",
-  price: 121.7,
-  quantity: 1,
-  type: "book" as const,
-  image: "/juice-glow-square.png",
+  image: "/baka-glutenfritt-square.png",
 };
 
 export default function CartPage() {
@@ -102,64 +94,74 @@ export default function CartPage() {
   const [campaignCartPrepared, setCampaignCartPrepared] = useState(false);
   const [legacyBundleNormalized, setLegacyBundleNormalized] = useState(false);
 
-  const hasHealthyBreakfastInCart = items.some(
-    (item) => item.id === HEALTHY_BREAKFAST_UPSELL.id,
-  );
-
-  const hasJuiceGlowInCart = items.some(
-    (item) => item.id === JUICE_GLOW_UPSELL.id,
-  );
-
-  const campaignItems = applySummerEbookBundlePricing(items);
+  const campaignItems = applyAutumnEbookBundlePricing(items);
 
   const getPricedItem = (item: (typeof items)[number]) =>
     campaignItems.find((pricedItem) => pricedItem.id === item.id) || item;
 
-  const hasSummerBundle = hasSummerEbookBundle(items);
+  const hasAutumnBundle = hasAutumnEbookBundle(items);
 
-  const checkoutHref = hasSummerBundle
-    ? `/checkout?campaign=${SUMMER_EBOOK_CAMPAIGN_ID}`
-    : "/checkout";
+  const checkoutHref =
+    AUTUMN_EBOOK_CAMPAIGN_ACTIVE && hasAutumnBundle
+      ? `/checkout?campaign=${AUTUMN_EBOOK_CAMPAIGN_ID}`
+      : "/checkout";
 
-  // Ny upsell:
-  // 1. Visa Juice & Glow om den inte redan finns i varukorgen
-  // 2. Om Juice & Glow finns, visa Hälsosamma Frukostar istället
-  const upsellProduct = !hasJuiceGlowInCart
-    ? JUICE_GLOW_UPSELL
-    : !hasHealthyBreakfastInCart
-      ? HEALTHY_BREAKFAST_UPSELL
-      : null;
+  const missingAutumnProducts = getMissingAutumnEbookProducts(items);
 
-  const showUpsell = upsellProduct !== null;
+  const hasAnyAutumnBook = AUTUMN_EBOOK_PRODUCTS.some((product) =>
+    items.some((item) => item.id === product.id && item.quantity > 0),
+  );
 
-  const upsellItems = upsellProduct ? [upsellProduct] : [];
+  const hasAnyOtherBook = items.some(
+    (item) =>
+      item.type === "book" &&
+      !AUTUMN_EBOOK_PRODUCTS.some((product) => product.id === item.id),
+  );
 
-  const upsellImage = upsellProduct?.image || "";
+  const hasGlutenFreeInCart = items.some(
+    (item) => item.id === GLUTEN_FREE_UPSELL.id && item.quantity > 0,
+  );
 
-  const upsellHref =
-    upsellProduct?.id === "juice-glow"
-      ? "/e-bocker/juice-glow"
-      : "/e-bocker/halsosamma-frukostar";
+  const showAutumnBundleUpsell =
+    AUTUMN_EBOOK_CAMPAIGN_ACTIVE &&
+    !hasAutumnBundle &&
+    (hasAnyAutumnBook || hasAnyOtherBook);
+
+  const showGlutenFreeUpsell = hasAutumnBundle && !hasGlutenFreeInCart;
+
+  const upsellItems = showAutumnBundleUpsell
+    ? missingAutumnProducts
+    : showGlutenFreeUpsell
+      ? [GLUTEN_FREE_UPSELL]
+      : [];
+
+  const showUpsell = upsellItems.length > 0;
+
+  const upsellImage = showAutumnBundleUpsell
+    ? "/host-bokbundle-square.png"
+    : GLUTEN_FREE_UPSELL.image;
 
   useEffect(() => {
     if (
+      !AUTUMN_EBOOK_CAMPAIGN_ACTIVE ||
       !isLoaded ||
       campaignCartPrepared ||
-      searchParams.get("campaign") !== SUMMER_EBOOK_CAMPAIGN_ID
+      searchParams.get("campaign") !== AUTUMN_EBOOK_CAMPAIGN_ID
     ) {
       return;
     }
 
-    const hasFullCampaignCart = SUMMER_EBOOK_PRODUCTS.every((product) =>
+    const hasFullCampaignCart = AUTUMN_EBOOK_PRODUCTS.every((product) =>
       items.some((item) => item.id === product.id && item.quantity > 0),
     );
+
     setCampaignCartPrepared(true);
-    storeSummerEbookCampaignSource("campaign-link");
+    storeAutumnEbookCampaignSource("campaign-link");
 
     if (hasFullCampaignCart) return;
 
     clearCart();
-    SUMMER_EBOOK_PRODUCTS.forEach((product) => addItem(product));
+    AUTUMN_EBOOK_PRODUCTS.forEach((product) => addItem(product));
   }, [isLoaded, campaignCartPrepared, searchParams, items, clearCart, addItem]);
 
   useEffect(() => {
@@ -254,8 +256,9 @@ export default function CartPage() {
 
     try {
       upsellItems.forEach((book) => addItem(book));
-      if (showSummerBundleUpsell) {
-        storeSummerEbookCampaignSource("cart-upsell");
+
+      if (showAutumnBundleUpsell) {
+        storeAutumnEbookCampaignSource("cart-upsell");
       }
 
       try {
@@ -523,7 +526,11 @@ export default function CartPage() {
                   <div className="flex-shrink-0 w-20 h-20 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-gray-100">
                     <Image
                       src={upsellImage}
-                      alt={upsellProduct?.name || "Rekommenderad e-bok"}
+                      alt={
+                        showAutumnBundleUpsell
+                          ? "Höstens e-bokspaket"
+                          : "Baka Glutenfritt"
+                      }
                       width={112}
                       height={112}
                       className="w-full h-full object-cover"
@@ -533,82 +540,89 @@ export default function CartPage() {
                   <div className="flex-1 min-w-0">
                     <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#93C560]/15 text-[#014421] text-[11px] sm:text-xs font-semibold mb-2">
                       <Sparkles className="w-3 h-3" />
-                      Rekommenderat tillägg
+                      {showAutumnBundleUpsell
+                        ? "Höstkampanj"
+                        : "Rekommenderat tillägg"}
                     </div>
 
                     <h3 className="text-sm sm:text-lg font-semibold text-[#014421] leading-snug mb-1">
-                      {upsellProduct?.id === "juice-glow"
-                        ? "Lägg till Juice & Glow"
-                        : "Lägg till Hälsosamma Frukostar"}
+                      {showAutumnBundleUpsell
+                        ? hasAnyAutumnBook
+                          ? "Komplettera ditt köp – få alla 3 för 250 kr"
+                          : "Få 3 e-böcker för 250 kr"
+                        : "Lägg till Baka Glutenfritt"}
                     </h3>
 
-                    <p className="text-xs sm:text-sm text-gray-600 leading-snug mb-2 line-clamp-2 sm:line-clamp-none">
-                      {upsellProduct?.id === "juice-glow" ? (
+                    <p className="text-xs sm:text-sm text-gray-600 leading-snug mb-2">
+                      {showAutumnBundleUpsell ? (
                         <>
-                          Upptäck 41 inspirerande recept på juicer, smoothies
-                          och varma kvällsdrycker.
+                          Lägg till{" "}
+                          {missingAutumnProducts
+                            .map((product) =>
+                              product.id === "soppboken"
+                                ? "Den stora Soppboken"
+                                : product.id === "juice-glow"
+                                  ? "Juice & Glow"
+                                  : "Hälsosamma Frukostar",
+                            )
+                            .join(", ")}{" "}
+                          och få hela höstpaketet för 250 kr.
                         </>
                       ) : (
                         <>
-                          Få fler näringsrika frukostidéer med recept för en god
-                          och hälsosam start på dagen.
+                          Upptäck Baka Glutenfritt med inspiration till god och
+                          glutenfri bakning.
                         </>
                       )}
                     </p>
 
                     <div className="flex items-center gap-2 text-[11px] sm:text-sm text-gray-500 mb-2 sm:mb-3">
                       <Book className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span>E-boken levereras direkt</span>
+                      <span>E-böckerna levereras direkt</span>
                     </div>
 
                     <div className="flex items-end justify-between gap-3">
                       <div className="min-w-0">
                         <div className="text-lg sm:text-2xl font-bold text-[#014421] leading-none">
-                          {upsellProduct?.id === "juice-glow"
-                            ? "129 kr"
-                            : "99 kr"}
+                          {showAutumnBundleUpsell ? "3 för 250 kr" : "79 kr"}
                         </div>
                         <div className="text-[11px] sm:text-sm text-gray-500 mt-1">
                           inkl. 6% moms
                         </div>
                       </div>
 
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <Link
-                          href={upsellHref}
-                          className="inline-flex items-center justify-center px-3 sm:px-5 py-2.5 sm:py-3 rounded-lg text-sm font-medium bg-[#014421] text-white hover:bg-[#1a5530] transition-colors whitespace-nowrap"
-                        >
-                          Läs mer
-                        </Link>
-                        <button
-                          onClick={handleAddUpsell}
-                          disabled={addingUpsell || !showUpsell}
-                          className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-                            upsellAdded
-                              ? "bg-[#93C560] text-[#014421]"
-                              : "bg-[#FF7e70] text-white hover:bg-[#e56b5e]"
-                          } disabled:opacity-60 disabled:cursor-not-allowed`}
-                        >
-                          {addingUpsell ? (
-                            <>
-                              <span className="inline-block h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
-                              <span className="hidden sm:inline">
-                                Lägger till...
-                              </span>
-                            </>
-                          ) : upsellAdded ? (
-                            <>
-                              <Check className="w-4 h-4" />
-                              <span className="hidden sm:inline">Tillagd</span>
-                            </>
-                          ) : (
-                            <>
-                              <Gift className="w-4 h-4" />
-                              <span>Lägg till</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
+                      <button
+                        onClick={handleAddUpsell}
+                        disabled={addingUpsell || !showUpsell}
+                        className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+                          upsellAdded
+                            ? "bg-[#93C560] text-[#014421]"
+                            : "bg-[#FF7e70] text-white hover:bg-[#e56b5e]"
+                        } disabled:opacity-60 disabled:cursor-not-allowed`}
+                      >
+                        {addingUpsell ? (
+                          <>
+                            <span className="inline-block h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+                            <span className="hidden sm:inline">
+                              Lägger till...
+                            </span>
+                          </>
+                        ) : upsellAdded ? (
+                          <>
+                            <Check className="w-4 h-4" />
+                            <span>Tillagd</span>
+                          </>
+                        ) : (
+                          <>
+                            <Gift className="w-4 h-4" />
+                            <span>
+                              {showAutumnBundleUpsell
+                                ? "Lägg till paketet"
+                                : "Lägg till"}
+                            </span>
+                          </>
+                        )}
+                      </button>
                     </div>
                   </div>
                 </div>

@@ -21,12 +21,13 @@ import {
 import { trackInitiateCheckout } from "../lib/analytics";
 import { readAttribution } from "../lib/attribution";
 import {
-  SUMMER_EBOOK_CAMPAIGN_ID,
-  applySummerEbookBundlePricing,
-  getStoredSummerEbookCampaignSource,
-  hasSummerEbookBundle,
-} from "../lib/campaigns/summer-ebooks";
-import { filterCouponItems } from '../lib/coupon-applicability';
+  AUTUMN_EBOOK_CAMPAIGN_ACTIVE,
+  AUTUMN_EBOOK_CAMPAIGN_ID,
+  applyAutumnEbookBundlePricing,
+  getStoredAutumnEbookCampaignSource,
+  hasAutumnEbookBundle,
+} from "../lib/campaigns/autumn-ebooks";
+import { filterCouponItems } from "../lib/coupon-applicability";
 
 const RECOVERED_ORDER_STORAGE_KEY = "checkout_recovered_from_order_id";
 
@@ -72,14 +73,21 @@ export default function Checkout() {
     string | null
   >(null);
 
-  const hasSummerBundleInCart = hasSummerEbookBundle(items);
+  const hasAutumnBundleInCart =
+    AUTUMN_EBOOK_CAMPAIGN_ACTIVE && hasAutumnEbookBundle(items);
+
+  const requestedCampaignId = searchParams.get("campaign");
 
   const campaignId =
-    searchParams.get("campaign") ||
-    (hasSummerBundleInCart ? SUMMER_EBOOK_CAMPAIGN_ID : undefined);
+    AUTUMN_EBOOK_CAMPAIGN_ACTIVE &&
+    (requestedCampaignId === AUTUMN_EBOOK_CAMPAIGN_ID || hasAutumnBundleInCart)
+      ? AUTUMN_EBOOK_CAMPAIGN_ID
+      : undefined;
+
   const recoverOrderId = searchParams.get("recover") || undefined;
   const recoverAttemptedRef = useRef(false);
-  const campaignItems = applySummerEbookBundlePricing(items);
+
+  const campaignItems = applyAutumnEbookBundlePricing(items);
   const getPricedItem = (item: (typeof items)[number]) =>
     campaignItems.find((pricedItem) => pricedItem.id === item.id) || item;
 
@@ -243,8 +251,8 @@ export default function Checkout() {
         couponCode: appliedCoupon?.code || undefined,
         campaignId,
         campaignSource:
-          campaignId === SUMMER_EBOOK_CAMPAIGN_ID
-            ? getStoredSummerEbookCampaignSource()
+          campaignId === AUTUMN_EBOOK_CAMPAIGN_ID
+            ? getStoredAutumnEbookCampaignSource()
             : undefined,
         attribution,
         recoveredFromOrderId: persistedRecoveredOrderId,
@@ -357,14 +365,26 @@ export default function Checkout() {
   );
 
   // Distribute discount proportionally
-  const discountableItems = appliedCoupon?.appliesTo === 'all'
-    ? campaignItems
-    : filterCouponItems(campaignItems, appliedCoupon?.appliesTo);
-  const discountableBookSubtotal = discountableItems.filter(item => item.type === 'book').reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const discountableCourseSubtotal = discountableItems.filter(item => item.type === 'course').reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const discountableSubtotal = discountableBookSubtotal + discountableCourseSubtotal;
-  const bookDiscountRatio = discountableSubtotal > 0 ? discountableBookSubtotal / discountableSubtotal : 0;
-  const courseDiscountRatio = discountableSubtotal > 0 ? discountableCourseSubtotal / discountableSubtotal : 0;
+  const discountableItems =
+    appliedCoupon?.appliesTo === "all"
+      ? campaignItems
+      : filterCouponItems(campaignItems, appliedCoupon?.appliesTo);
+  const discountableBookSubtotal = discountableItems
+    .filter((item) => item.type === "book")
+    .reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const discountableCourseSubtotal = discountableItems
+    .filter((item) => item.type === "course")
+    .reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const discountableSubtotal =
+    discountableBookSubtotal + discountableCourseSubtotal;
+  const bookDiscountRatio =
+    discountableSubtotal > 0
+      ? discountableBookSubtotal / discountableSubtotal
+      : 0;
+  const courseDiscountRatio =
+    discountableSubtotal > 0
+      ? discountableCourseSubtotal / discountableSubtotal
+      : 0;
   const bookDiscount = discount * bookDiscountRatio;
   const courseDiscount = discount * courseDiscountRatio;
 
@@ -803,7 +823,14 @@ export default function Checkout() {
                     <div className="flex justify-between text-xs sm:text-sm">
                       <span className="text-gray-600">Rabatt</span>
                       <span className="text-green-600 whitespace-nowrap">
-                        -{discount.toLocaleString('sv-SE', { minimumFractionDigits: Number.isInteger(discount) ? 0 : 2, maximumFractionDigits: 2 })} kr
+                        -
+                        {discount.toLocaleString("sv-SE", {
+                          minimumFractionDigits: Number.isInteger(discount)
+                            ? 0
+                            : 2,
+                          maximumFractionDigits: 2,
+                        })}{" "}
+                        kr
                       </span>
                     </div>
                   )}
@@ -822,7 +849,13 @@ export default function Checkout() {
                       Totalt (inkl. moms)
                     </span>
                     <span className="text-base sm:text-lg font-bold text-gray-900">
-                      {totalInclVat.toLocaleString('sv-SE', { minimumFractionDigits: Number.isInteger(totalInclVat) ? 0 : 2, maximumFractionDigits: 2 })} kr
+                      {totalInclVat.toLocaleString("sv-SE", {
+                        minimumFractionDigits: Number.isInteger(totalInclVat)
+                          ? 0
+                          : 2,
+                        maximumFractionDigits: 2,
+                      })}{" "}
+                      kr
                     </span>
                   </div>
                 </div>
@@ -869,7 +902,11 @@ export default function Checkout() {
           <div className="flex-1">
             <p className="text-xs text-gray-500">Totalt att betala</p>
             <p className="text-lg font-bold text-[#014421]">
-              {totalInclVat.toLocaleString('sv-SE', { minimumFractionDigits: Number.isInteger(totalInclVat) ? 0 : 2, maximumFractionDigits: 2 })} kr
+              {totalInclVat.toLocaleString("sv-SE", {
+                minimumFractionDigits: Number.isInteger(totalInclVat) ? 0 : 2,
+                maximumFractionDigits: 2,
+              })}{" "}
+              kr
             </p>
           </div>
           <button

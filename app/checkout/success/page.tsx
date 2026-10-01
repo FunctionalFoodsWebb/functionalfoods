@@ -239,6 +239,36 @@ function CheckoutSuccessContent() {
 
   const hasCourses = orderItems.some((item: any) => item.type === "course");
   const onlyEbooks = hasEbooks && !hasCourses;
+  const purchasedEbooks = orderItems.filter((item: any) => {
+    const id = item.id?.toLowerCase?.() || "";
+    const name = item.name?.toLowerCase?.() || "";
+
+    return (
+      item.type === "book" ||
+      id.includes("brodboken") ||
+      id.includes("paskbuffe") ||
+      id.includes("sota-godsaker") ||
+      id.includes("grill-sommarmat") ||
+      id.includes("halsosamma-frukostar") ||
+      id.includes("juice-glow") ||
+      id.includes("soppboken") ||
+      name.includes("e-bok") ||
+      name.includes("brodboken") ||
+      name.includes("glutenfritt") ||
+      name.includes("påskbuffé") ||
+      name.includes("paskbuffe") ||
+      name.includes("söta godsaker") ||
+      name.includes("sota godsaker") ||
+      name.includes("grill") ||
+      name.includes("hälsosamma frukostar") ||
+      name.includes("halsosamma frukostar") ||
+      name.includes("juice & glow") ||
+      name.includes("juice glow") ||
+      name.includes("soppboken")
+    );
+  });
+
+  const hasMultipleEbooks = purchasedEbooks.length > 1;
 
   const purchasedEbook = orderItems.find((item: any) => {
     const id = item.id?.toLowerCase?.() || "";
@@ -401,12 +431,16 @@ function CheckoutSuccessContent() {
             </h1>
 
             <p className="text-xl text-gray-600 mb-4">
-              Din e-bok är på väg till din inkorg!
+              {hasMultipleEbooks
+                ? "Dina e-böcker är på väg till din inkorg!"
+                : "Din e-bok är på väg till din inkorg!"}
             </p>
 
             <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
               <Mail className="w-4 h-4" />
-              Kolla din e-post för nerladdningslänken
+              {hasMultipleEbooks
+                ? "Kolla din e-post för nerladdningslänkarna"
+                : "Kolla din e-post för nerladdningslänken"}
             </div>
           </motion.div>
 
@@ -431,10 +465,23 @@ function CheckoutSuccessContent() {
                     E-post på väg
                   </h3>
                   <p className="text-gray-600 text-sm">
-                    Ett mejl med din personliga nerladdningslänk skickas till{" "}
-                    <strong>
-                      {customerEmail || user?.email || "din e-postadress"}
-                    </strong>
+                    {hasMultipleEbooks ? (
+                      <>
+                        Separata mejl med dina personliga nerladdningslänkar
+                        skickas till{" "}
+                        <strong>
+                          {customerEmail || user?.email || "din e-postadress"}
+                        </strong>
+                      </>
+                    ) : (
+                      <>
+                        Ett mejl med din personliga nerladdningslänk skickas
+                        till{" "}
+                        <strong>
+                          {customerEmail || user?.email || "din e-postadress"}
+                        </strong>
+                      </>
+                    )}
                   </p>
                 </div>
               </div>
@@ -446,11 +493,15 @@ function CheckoutSuccessContent() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">
-                    Ladda ner din e-bok
+                    {hasMultipleEbooks
+                      ? "Ladda ner dina e-böcker"
+                      : "Ladda ner din e-bok"}
                   </h3>
+
                   <p className="text-gray-600 text-sm mb-2">
-                    Klicka på länken i mejlet för att ladda ner din e-bok som
-                    PDF. Länken är unik för dig och fungerar i 30 dagar.
+                    {hasMultipleEbooks
+                      ? "Klicka på länkarna i mejlen för att ladda ner dina e-böcker som PDF."
+                      : "Klicka på länken i mejlet för att ladda ner din e-bok som PDF."}
                   </p>
                 </div>
               </div>
@@ -462,10 +513,15 @@ function CheckoutSuccessContent() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">
-                    {ebookDisplay.enjoyTitle}
+                    {hasMultipleEbooks
+                      ? "Njut av dina nya e-böcker!"
+                      : ebookDisplay.enjoyTitle}
                   </h3>
+
                   <p className="text-gray-600 text-sm mb-3">
-                    {ebookDisplay.description}
+                    {hasMultipleEbooks
+                      ? "Upptäck alla recept och all inspiration i dina nya e-böcker."
+                      : ebookDisplay.description}
                   </p>
                 </div>
               </div>
@@ -484,20 +540,42 @@ function CheckoutSuccessContent() {
                 <div className="flex items-center gap-4">
                   <div className="relative w-20 h-28 rounded-lg overflow-hidden shadow-lg flex-shrink-0">
                     <Image
-                      src={ebookDisplay.image}
-                      alt={ebookDisplay.alt}
+                      src={
+                        hasMultipleEbooks
+                          ? "/host-bokbundle-square.png"
+                          : ebookDisplay.image
+                      }
+                      alt={
+                        hasMultipleEbooks
+                          ? "Höstkampanj – 3 e-böcker"
+                          : ebookDisplay.alt
+                      }
                       fill
                       className="object-cover"
                     />
                   </div>
+
                   <div>
-                    <h4 className="font-semibold text-gray-900">Din e-bok</h4>
-                    <p className="text-sm text-gray-600">
-                      {ebookDisplay.title}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {ebookDisplay.subtitle}
-                    </p>
+                    <h4 className="font-semibold text-gray-900">
+                      {hasMultipleEbooks ? "Dina e-böcker" : "Din e-bok"}
+                    </h4>
+
+                    {hasMultipleEbooks ? (
+                      <div className="mt-1 space-y-1 text-sm text-gray-600">
+                        {purchasedEbooks.map((book: any, index: number) => (
+                          <p key={book.id || index}>{book.name}</p>
+                        ))}
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm text-gray-600">
+                          {ebookDisplay.title}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {ebookDisplay.subtitle}
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
