@@ -239,9 +239,34 @@ function CheckoutSuccessContent() {
 
   const hasCourses = orderItems.some((item: any) => item.type === "course");
   const onlyEbooks = hasEbooks && !hasCourses;
-  const purchasedEbooks = orderItems.filter(
-    (item: any) => item.type === "book",
-  );
+  const purchasedEbooks = orderItems.filter((item: any) => {
+    const id = item.id?.toLowerCase?.() || "";
+    const name = item.name?.toLowerCase?.() || "";
+
+    return (
+      item.type === "book" ||
+      id.includes("brodboken") ||
+      id.includes("paskbuffe") ||
+      id.includes("sota-godsaker") ||
+      id.includes("grill-sommarmat") ||
+      id.includes("halsosamma-frukostar") ||
+      id.includes("juice-glow") ||
+      id.includes("soppboken") ||
+      name.includes("e-bok") ||
+      name.includes("brodboken") ||
+      name.includes("glutenfritt") ||
+      name.includes("påskbuffé") ||
+      name.includes("paskbuffe") ||
+      name.includes("söta godsaker") ||
+      name.includes("sota godsaker") ||
+      name.includes("grill") ||
+      name.includes("hälsosamma frukostar") ||
+      name.includes("halsosamma frukostar") ||
+      name.includes("juice & glow") ||
+      name.includes("juice glow") ||
+      name.includes("soppboken")
+    );
+  });
 
   const hasMultipleEbooks = purchasedEbooks.length > 1;
 
