@@ -11,6 +11,7 @@ const productImages: Record<string, string> = {
   "halsosamma-frukostar": "/halsosamma-frukostar-square.png",
   "juice-glow": "/juice-glow-square.png",
   soppboken: "/soppboken-square.png",
+  "julbord-2026": "/julbord-2026-square.png",
   "functional-flow": "/Kurser_bilder/Functional_Gut Health.jpg",
   "functional-basics":
     "/Kurser_bilder/Functional_Basics - Grunden i functional foods.jpg",

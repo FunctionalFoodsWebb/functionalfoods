@@ -270,6 +270,14 @@ export async function POST(request: NextRequest) {
           ) {
             ebookId = "soppboken";
           }
+          if (
+            book.name.toLowerCase().includes("julbord") ||
+            book.name.toLowerCase().includes("julbord-2026") ||
+            book.name.toLowerCase().includes("julbord 2026") ||
+            book.name.toLowerCase().includes("Ulrikas julbord")
+          ) {
+            ebookId = "julbord-2026";
+          }
 
           await tx.ebookDownload.create({
             data: {
@@ -376,6 +384,9 @@ export async function POST(request: NextRequest) {
           if (downloadRecord.ebookId === "soppboken") {
             downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadRecord.token}`;
           }
+          if (downloadRecord.ebookId === "julbord-2026") {
+            downloadUrl = `${baseUrl}/e-bocker/julbord-2026/ladda-ner?token=${downloadRecord.token}`;
+          }
 
           const sent = await emailService.sendEbookDownloadEmail({
             email: customerEmail,
@@ -410,7 +421,9 @@ export async function POST(request: NextRequest) {
                             ? "Köp - Juice & Glow"
                             : downloadRecord.ebookId === "soppboken"
                               ? "Köp - Den stora Soppboken"
-                              : "Köp - Brödboken";
+                              : downloadRecord.ebookId === "julbord-2026"
+                                ? "Köp - Julbord 2026"
+                                : "Köp - Brödboken";
 
                 await Promise.race([
                   mailchimpMarketing.addSubscriber({

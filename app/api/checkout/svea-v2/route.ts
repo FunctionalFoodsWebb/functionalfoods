@@ -255,6 +255,13 @@ export async function POST(req: NextRequest) {
         type: "book",
         vatRate: 0.06,
       },
+      julbord: {
+        id: "julbord-2026",
+        name: "Julbord – E-bok",
+        price: 93.4,
+        type: "book",
+        vatRate: 0.06,
+      },
     };
 
     // Add book products to productMap
@@ -727,6 +734,15 @@ export async function POST(req: NextRequest) {
       ) {
         return "EBOOK-SOPPBOKEN";
       }
+      if (
+        key.includes("julbord-2026") ||
+        key.includes("julbord") ||
+        key.includes("Julbord") ||
+        key.includes("Ulrikas julbord") ||
+        key.includes("julbord 2026")
+      ) {
+        return "EBOOK-JULBORD-2026";
+      }
 
       return item.id; // fallback
     };
@@ -769,7 +785,9 @@ export async function POST(req: NextRequest) {
                 ? "Sota Godsaker E-bok"
                 : item.id === "halsosamma-frukostar"
                   ? "Halsosamma Frukostar E-bok"
-                  : item.name,
+                  : item.id === "julbord-2026"
+                    ? "Julbord E-bok"
+                    : item.name,
           quantity: item.quantity * 100, // Quantity in minor units: 100 = 1 unit
           unitPrice: priceInOre, // Pris INKLUSIVE moms i ÖRE (vatPercent används bara för momsrapportering)
           vatPercent: sveaVatPercent, // VAT in Svea format (600 = 6%, 2500 = 25%)
@@ -1084,6 +1102,14 @@ export async function POST(req: NextRequest) {
             ) {
               ebookId = "soppboken";
             }
+            if (
+              book.name.toLowerCase().includes("julbord") ||
+              book.name.toLowerCase().includes("julbord-2026") ||
+              book.name.toLowerCase().includes("Ulrikas julbord") ||
+              book.name.toLowerCase().includes("julbord 2026")
+            ) {
+              ebookId = "julbord-2026";
+            }
 
             // Optional: avoid duplicates if route is retried
             const existing = await prisma.ebookDownload.findFirst({
@@ -1134,6 +1160,9 @@ export async function POST(req: NextRequest) {
             }
             if (ebookId === "soppboken") {
               downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
+            }
+            if (ebookId === "julbord-2026") {
+              downloadUrl = `${baseUrl}/e-bocker/julbord-2026/ladda-ner?token=${downloadToken}`;
             }
 
             await emailService.sendEbookDownloadEmail({

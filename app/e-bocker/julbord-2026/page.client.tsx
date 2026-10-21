@@ -17,20 +17,22 @@ import { trackAddToCart, trackViewContent } from "@/app/lib/analytics";
 
 // Default content (fallback)
 const DEFAULT_CONTENT = {
-  title: "Julbord",
-  subtitle: "E-bok av Ulrika Davidsson",
-  description: "Fira jul med Ulrikas jul E-bok.",
-  shortDescription: "Goda julrecept",
-  image: "/paskbuffe-omslag.jpg",
+  title: "Fira jul med Ulrika Davidsson",
+  subtitle: "Godare julmat som får dig att må bra. ",
+  description:
+    "Duka upp ett komplett, hälsosamt julbord med 20 näringsrika julrecept. I den här e-boken hittar du inspiration till julens alla goda stunder – från juliga drinkar och tillbehör till desserter och julfika.",
+  shortDescription:
+    "Njut av julens smaker med naturligt glutenfria och sockerfria recept. Låt Ulrika inspirera dig till ett julbord där god mat och omtanke om dig själv får ta plats.",
+  image: "/julbord-2026-omslag.png",
   price: "99 kr",
   features: [
-    "Smarta tips för påskens utmaningar",
-    "50 festliga recept för hela påskbordet",
-    "Näringsrika rätter som hela familjen älskar",
-    "Snabba, goda och mättande måltider",
+    "20 näringsrika julrecept",
+    "Juliga drinkar & tillbehör",
+    "Desserter & julfika",
+    "Glutenfritt & sockerfritt",
   ],
   authorSection:
-    "Ulrika Davidsson är kostrådgivare, receptkreatör och bästsäljande författare till över 40 böcker. Hennes online-kurser har hjälpt tiotusentals personer att finna en mer hållbar och hälsosam livsstil.",
+    "Med Functional Foods står god mat och välmående i centrum. I jul-e-boken delar Ulrika med sig av recept och inspiration till ett julbord med omtanke – och gott om julkänsla.",
 };
 
 interface PageContent {
@@ -44,7 +46,7 @@ interface PageContent {
   authorSection?: string;
 }
 
-export default function PaskbokenPage() {
+export default function Julbord2026Page() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
@@ -56,19 +58,19 @@ export default function PaskbokenPage() {
   const content = { ...DEFAULT_CONTENT, ...pageContent };
 
   const ebook = {
-    id: "julbord",
+    id: "julbord-2026",
     name: "Julbord– E-bok av Ulrika Davidsson",
     price: 93.4, // 99 kr inkl 6% moms = 93.40 kr exkl moms (99 / 1.06)
     quantity: 1,
     type: "book" as const,
-    image: content.image || "/paskbuffe-omslag.jpg",
+    image: content.image || "/julbord-2026-omslag.png",
   };
 
   // Fetch custom page content
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const response = await fetch("/api/pages/paskbuffe");
+        const response = await fetch("/api/pages/julbord-2026");
         if (response.ok) {
           const data = await response.json();
           if (data.content) setPageContent(data.content);
@@ -182,7 +184,7 @@ export default function PaskbokenPage() {
                   className={`transition-all duration-700 ${imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
                 >
                   <Image
-                    src={content.image || "/paskbuffe-omslag.jpg"}
+                    src={content.image || "/julbord-2026-omslag.png"}
                     alt={`${content.title} – ${content.subtitle}`}
                     width={400}
                     height={500}
@@ -295,11 +297,12 @@ export default function PaskbokenPage() {
                 <ChefHat className="w-6 h-6 text-[#93C560]" />
               </div>
               <h3 className="text-white font-semibold mb-2">
-                Hälsosamma recept
+                En jul fylld av smak
               </h3>
               <p className="text-gray-300 text-sm">
-                Du får näringsrika, mättande och riktigt goda recept - som är
-                enkla att laga
+                Samla familj och vänner kring ett komplett, hälsobaserat
+                julbord. Hitta inspiration bland näringsrika recept och juliga
+                tillbehör som gör måltiden till något att längta efter.
               </p>
             </div>
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
@@ -307,11 +310,12 @@ export default function PaskbokenPage() {
                 <BookOpen className="w-6 h-6 text-emerald-300" />
               </div>
               <h3 className="text-white font-semibold mb-2">
-                En komplett e-bok
+                Från drink till julfika
               </h3>
               <p className="text-gray-300 text-sm">
-                Goda recept till påsken – smakrika favoriter att njuta av under
-                påskhelgen.
+                Gör plats för mer än själva julmaten. Upptäck juliga drinkar,
+                desserter och fika som sätter guldkant på advent, julmiddagen
+                och de lediga dagarna däremellan.
               </p>
             </div>
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
@@ -319,11 +323,12 @@ export default function PaskbokenPage() {
                 <Leaf className="w-6 h-6 text-lime-200" />
               </div>
               <h3 className="text-white font-semibold mb-2">
-                Functional Foods
+                Nya goda favoriter
               </h3>
               <p className="text-gray-300 text-sm">
-                Oavsett om det är vardag eller högtid går det att njuta av både
-                god och näringsrik mat som får kroppen att må bra.
+                Naturligt glutenfria och sockerfria recept för dig som vill
+                njuta av en godare jul. En e-bok att återvända till när du
+                planerar, lagar och dukar upp.
               </p>
             </div>
           </div>
@@ -342,7 +347,7 @@ export default function PaskbokenPage() {
             </div>
             <div>
               <h3 className="text-xl font-semibold text-white mb-2">
-                Om Ulrika Davidsson
+                Julen med Ulrika Davidsson
               </h3>
               <p className="text-gray-300">{content.authorSection}</p>
             </div>

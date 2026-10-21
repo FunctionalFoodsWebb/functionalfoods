@@ -362,6 +362,21 @@ class MailchimpMarketingService {
       [normalize("Soppor som gör gott")]: "Köp - Den stora Soppboken",
       [normalize("Soppor som gör gott – E-bok av Ulrika Davidsson")]:
         "Köp - Den stora Soppboken",
+
+      // Julbord (ebook)
+      [normalize("julbok-2026")]: "Köp - Julbord 2026",
+      [normalize("julbord-2026")]: "Köp - Julbord 2026",
+      [normalize("julbord")]: "Köp - Julbord 2026",
+      [normalize("Julbord")]: "Köp - Julbord 2026",
+      [normalize("Julbord (E-bok)")]: "Köp - Julbord 2026",
+      [normalize("Julbord ebook")]: "Köp - Julbord 2026",
+      [normalize("Julbord e-bok")]: "Köp - Julbord 2026",
+      [normalize("E-bok Julbord")]: "Köp - Julbord 2026",
+      [normalize("Ebok Julbord")]: "Köp - Julbord 2026",
+      [normalize("Julbord - e-bok")]: "Köp - Julbord 2026",
+      [normalize("Julbord – e-bok")]: "Köp - Julbord 2026",
+      [normalize("Julbord – E-bok av Ulrika Davidsson")]: "Köp - Julbord 2026",
+      [normalize("Julbord - E-bok av Ulrika Davidsson")]: "Köp - Julbord 2026",
     };
 
     const tags: string[] = ["kund"];
