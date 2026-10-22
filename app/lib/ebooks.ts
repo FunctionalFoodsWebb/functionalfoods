@@ -83,7 +83,7 @@ export const EBOOK_PRODUCTS: Record<
   "julbord-2026": {
     id: "julbord-2026",
     name: "Julbord – E-bok av Ulrika Davidsson",
-    priceExVat: 93.4,
+    priceExVat: 121.7,
     downloadRoute: "/e-bocker/julbord-2026/ladda-ner",
     pdfPath: "/julbord-2026-ulrika-davidsson.pdf",
     matchers: ["julbord", "julbord-2026", "Ulrikas julbord"],

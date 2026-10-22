@@ -193,11 +193,12 @@ class MailchimpEcommerceService {
       ) {
         return "soppboken";
       }
-       if (
+      if (
         normalizedName.includes("julbord") ||
         normalizedName.includes("jul")
       ) {
         return "julbord-2026";
+      }
     }
 
     const rawId = item.id || item.name;

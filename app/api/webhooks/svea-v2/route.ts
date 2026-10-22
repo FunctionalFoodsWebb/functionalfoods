@@ -1061,8 +1061,7 @@ async function handleOrderCompleted(
                   n.includes("Ulrikas julbord")
                 ) {
                   ebookId = "julbord-2026";
-                
-                
+                }
 
                 // Reuse existing token if it already exists for this order + ebook
                 let existingDownload = await prisma.ebookDownload.findFirst({
@@ -1119,7 +1118,7 @@ async function handleOrderCompleted(
                 if (ebookId === "soppboken") {
                   downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
                 }
-                 if (ebookId === "julbord-2026") {
+                if (ebookId === "julbord-2026") {
                   downloadUrl = `${baseUrl}/e-bocker/julbord-2026/ladda-ner?token=${downloadToken}`;
                 }
 
@@ -1184,8 +1183,8 @@ async function handleOrderCompleted(
                                 : ebookId === "soppboken"
                                   ? "Köp - Den stora Soppboken"
                                   : ebookId === "julbord-2026"
-                                  ? "Köp - Julbord 2026"
-                                  : "Köp - Brödboken";
+                                    ? "Köp - Julbord 2026"
+                                    : "Köp - Brödboken";
 
                     await Promise.race([
                       mailchimpMarketing.addSubscriber({

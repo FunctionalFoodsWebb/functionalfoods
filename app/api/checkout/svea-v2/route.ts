@@ -258,7 +258,7 @@ export async function POST(req: NextRequest) {
       julbord: {
         id: "julbord-2026",
         name: "Julbord – E-bok",
-        price: 93.4,
+        price: 121.7,
         type: "book",
         vatRate: 0.06,
       },

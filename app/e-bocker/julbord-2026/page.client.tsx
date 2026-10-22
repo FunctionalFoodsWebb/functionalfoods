@@ -24,7 +24,7 @@ const DEFAULT_CONTENT = {
   shortDescription:
     "Njut av julens smaker med naturligt glutenfria och sockerfria recept. Låt Ulrika inspirera dig till ett julbord där god mat och omtanke om dig själv får ta plats.",
   image: "/julbord-2026-omslag.png",
-  price: "99 kr",
+  price: "129 kr",
   features: [
     "50+ näringsrika julrecept",
     "Juliga drinkar & tillbehör",
@@ -60,7 +60,7 @@ export default function Julbord2026Page() {
   const ebook = {
     id: "julbord-2026",
     name: "Julbord– E-bok av Ulrika Davidsson",
-    price: 93.4, // 99 kr inkl 6% moms = 93.40 kr exkl moms (99 / 1.06)
+    price: 121.7, // 129 kr inkl 6% moms = 121.70 kr exkl moms (129 / 1.06)
     quantity: 1,
     type: "book" as const,
     image: content.image || "/julbord-2026-omslag.png",
