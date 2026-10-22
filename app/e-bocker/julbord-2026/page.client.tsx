@@ -20,13 +20,13 @@ const DEFAULT_CONTENT = {
   title: "Fira jul med Ulrika Davidsson",
   subtitle: "Godare julmat som får dig att må bra. ",
   description:
-    "Duka upp ett komplett, hälsosamt julbord med 20 näringsrika julrecept. I den här e-boken hittar du inspiration till julens alla goda stunder – från juliga drinkar och tillbehör till desserter och julfika.",
+    "Duka upp ett komplett, hälsosamt julbord med 50+ näringsrika julrecept. I den här e-boken hittar du inspiration till julens alla goda stunder – från juliga drinkar och tillbehör till desserter och julfika.",
   shortDescription:
     "Njut av julens smaker med naturligt glutenfria och sockerfria recept. Låt Ulrika inspirera dig till ett julbord där god mat och omtanke om dig själv får ta plats.",
   image: "/julbord-2026-omslag.png",
   price: "99 kr",
   features: [
-    "20 näringsrika julrecept",
+    "50+ näringsrika julrecept",
     "Juliga drinkar & tillbehör",
     "Desserter & julfika",
     "Glutenfritt & sockerfritt",

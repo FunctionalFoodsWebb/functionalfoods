@@ -418,7 +418,7 @@ function CheckoutSuccessContent() {
                     title: "Julbord – E-bok",
                     image: "/julbord-2026-samlingssida.png",
                     alt: "Julbord E-bok",
-                    subtitle: "PDF-format • 20 recept",
+                    subtitle: "PDF-format • 50+ recept",
                     description: "Godare julmat som får dig att må bra.",
                     enjoyTitle: "Njut av din julmat!",
                   }
