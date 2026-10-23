@@ -272,11 +272,9 @@ export async function POST(request: NextRequest) {
           }
           if (
             book.name.toLowerCase().includes("julbord") ||
-            book.name.toLowerCase().includes("julbord-2026") ||
-            book.name.toLowerCase().includes("julbord 2026") ||
-            book.name.toLowerCase().includes("Ulrikas julbord")
+            book.name.toLowerCase().includes("julbord-2026-egmont")
           ) {
-            ebookId = "julbord-2026";
+            ebookId = "julbord-2026-egmont";
           }
 
           await tx.ebookDownload.create({
@@ -384,8 +382,8 @@ export async function POST(request: NextRequest) {
           if (downloadRecord.ebookId === "soppboken") {
             downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadRecord.token}`;
           }
-          if (downloadRecord.ebookId === "julbord-2026") {
-            downloadUrl = `${baseUrl}/e-bocker/julbord-2026/ladda-ner?token=${downloadRecord.token}`;
+          if (downloadRecord.ebookId === "julbord-2026-egmont") {
+            downloadUrl = `${baseUrl}/e-bocker/julbord-2026-egmont/ladda-ner?token=${downloadRecord.token}`;
           }
 
           const sent = await emailService.sendEbookDownloadEmail({
@@ -421,8 +419,8 @@ export async function POST(request: NextRequest) {
                             ? "Köp - Juice & Glow"
                             : downloadRecord.ebookId === "soppboken"
                               ? "Köp - Den stora Soppboken"
-                              : downloadRecord.ebookId === "julbord-2026"
-                                ? "Köp - Julbord 2026"
+                              : downloadRecord.ebookId === "julbord-2026-egmont"
+                                ? "Köp -  Julbord 2026 Egmont"
                                 : "Köp - Brödboken";
 
                 await Promise.race([

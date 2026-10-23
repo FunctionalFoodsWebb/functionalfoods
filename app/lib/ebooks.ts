@@ -80,13 +80,13 @@ export const EBOOK_PRODUCTS: Record<
     pdfPath: "/den-stora-soppboken-ulrika-davidsson.pdf",
     matchers: ["soppboken", "den stora soppboken", "stora soppboken"],
   },
-  "julbord-2026": {
-    id: "julbord-2026",
+  "julbord-2026-egmont": {
+    id: "julbord-2026-egmont",
     name: "Julbord – E-bok av Ulrika Davidsson",
     priceExVat: 121.7,
-    downloadRoute: "/e-bocker/julbord-2026/ladda-ner",
+    downloadRoute: "/e-bocker/julbord-2026-egmont/ladda-ner",
     pdfPath: "/julbord-2026-ulrika-davidsson.pdf",
-    matchers: ["julbord", "julbord-2026", "Ulrikas julbord"],
+    matchers: ["julbord-2026-egmont", "julbord", "Ulrikas julbord"],
   },
 };
 

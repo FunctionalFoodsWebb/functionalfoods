@@ -187,7 +187,7 @@ export async function POST(req: NextRequest) {
           vatRate: 0.06,
         },
         {
-          id: "julbord-2026",
+          id: "julbord-2026-egmont",
           name: "Julbord – E-bok av Ulrika Davidsson",
           price: 121.7,
           basePrice: 121.7,

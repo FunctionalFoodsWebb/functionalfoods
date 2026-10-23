@@ -452,9 +452,9 @@ const PAGE_CONFIGS: Record<string, PageConfig> = {
     ],
   },
   julbord: {
-    pageId: "julbord-2026",
-    name: "Julbord E-bok",
-    path: "/e-bocker/julbord-2026",
+    pageId: "julbord-2026-egmont",
+    name: "Julbord E-bok - Egmont",
+    path: "/e-bocker/julbord-2026-egmont",
     fields: [
       {
         key: "title",

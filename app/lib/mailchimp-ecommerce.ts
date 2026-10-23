@@ -144,6 +144,10 @@ class MailchimpEcommerceService {
     name: string;
     type?: string;
   }): string {
+    // Prioritera Egmont-versionens unika produkt-ID
+    if (item.id?.toLowerCase() === "julbord-2026-egmont") {
+      return "julbord-2026-egmont";
+    }
     const normalizedName = item.name
       .toLowerCase()
       .normalize("NFD")
@@ -193,11 +197,8 @@ class MailchimpEcommerceService {
       ) {
         return "soppboken";
       }
-      if (
-        normalizedName.includes("julbord") ||
-        normalizedName.includes("jul")
-      ) {
-        return "julbord-2026";
+      if (normalizedName.includes("julbord")) {
+        return "julbord-2026-egmont";
       }
     }
 
@@ -223,7 +224,7 @@ class MailchimpEcommerceService {
       "halsosamma-frukostar": "/halsosamma-frukostar-square.png",
       "juice-glow": "/juice-glow-square.png",
       soppboken: "/soppboken-square.png",
-      "julbord-2026": "/julbord-2026-square.png",
+      "julbord-2026-egmont": "/julbord-2026-square.png",
       "functional-flow": "/Kurser_bilder/Functional_Gut Health.jpg",
       "functional-basics":
         "/Kurser_bilder/Functional_Basics - Grunden i functional foods.jpg",

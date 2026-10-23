@@ -107,8 +107,8 @@ const EBOOK_CONFIG: Record<
     image: "/soppboken-square.png",
     description: "Digital e-bok med smakrika soppor.",
   },
-  "julbord-2026": {
-    slug: "e-bocker/julbord-2026",
+  "julbord-2026-egmont": {
+    slug: "e-bocker/julbord-2026-egmont",
     image: "/julbord-2026-square.png",
     description: "Digital e-bok med julrecept.",
   },

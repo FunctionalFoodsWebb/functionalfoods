@@ -363,11 +363,12 @@ class MailchimpMarketingService {
       [normalize("Soppor som gör gott – E-bok av Ulrika Davidsson")]:
         "Köp - Den stora Soppboken",
 
-      // Julbord (ebook)
-      [normalize("julbok-2026")]: "Köp - Julbord 2026",
+      // Julbord 2026 – Egmont
+      [normalize("julbord-2026-egmont")]: "Köp - Julbord 2026 Egmont",
+
+      // Julbord 2026 – ordinarie version
       [normalize("julbord-2026")]: "Köp - Julbord 2026",
       [normalize("julbord")]: "Köp - Julbord 2026",
-      [normalize("Julbord")]: "Köp - Julbord 2026",
       [normalize("Julbord (E-bok)")]: "Köp - Julbord 2026",
       [normalize("Julbord ebook")]: "Köp - Julbord 2026",
       [normalize("Julbord e-bok")]: "Köp - Julbord 2026",
@@ -397,8 +398,13 @@ class MailchimpMarketingService {
 
       // 2) Partial match (normalized)
       if (!tag) {
-        for (const [mapKey, mapValue] of Object.entries(courseTagMap)) {
-          if (key.includes(mapKey) || mapKey.includes(key)) {
+        // Prioritera specifika produkt-ID:n före generella produktnamn
+        const sortedEntries = Object.entries(courseTagMap).sort(
+          ([a], [b]) => b.length - a.length,
+        );
+
+        for (const [mapKey, mapValue] of sortedEntries) {
+          if (key.includes(mapKey)) {
             tag = mapValue;
             break;
           }

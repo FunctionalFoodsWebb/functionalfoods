@@ -46,7 +46,7 @@ interface PageContent {
   authorSection?: string;
 }
 
-export default function Julbord2026Page() {
+export default function Julbord2026EgmontPage() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
@@ -58,7 +58,7 @@ export default function Julbord2026Page() {
   const content = { ...DEFAULT_CONTENT, ...pageContent };
 
   const ebook = {
-    id: "julbord-2026",
+    id: "julbord-2026-egmont",
     name: "Julbord– E-bok av Ulrika Davidsson",
     price: 121.7, // 129 kr inkl 6% moms = 121.70 kr exkl moms (129 / 1.06)
     quantity: 1,
@@ -70,7 +70,7 @@ export default function Julbord2026Page() {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const response = await fetch("/api/pages/julbord-2026");
+        const response = await fetch("/api/pages/julbord-2026-egmont");
         if (response.ok) {
           const data = await response.json();
           if (data.content) setPageContent(data.content);

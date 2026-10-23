@@ -364,13 +364,8 @@ async function completeOrder(order: any, sveaOrder: any) {
       ) {
         ebookId = "soppboken";
       }
-      if (
-        n.includes("julbord") ||
-        n.includes("julbord 2026") ||
-        n.includes("julbord-2026") ||
-        n.includes("Ulrikas julbord")
-      ) {
-        ebookId = "julbord-2026";
+      if (n.includes("julbord")) {
+        ebookId = "julbord-2026-egmont";
       }
 
       await prisma.ebookDownload.create({
@@ -410,8 +405,8 @@ async function completeOrder(order: any, sveaOrder: any) {
         downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
       }
 
-      if (ebookId === "julbord-2026") {
-        downloadUrl = `${baseUrl}/e-bocker/julbord-2026/ladda-ner?token=${downloadToken}`;
+      if (ebookId === "julbord-2026-egmont") {
+        downloadUrl = `${baseUrl}/e-bocker/julbord-2026-egmont/ladda-ner?token=${downloadToken}`;
       }
 
       await emailService.sendEbookDownloadEmail({
@@ -447,8 +442,8 @@ async function completeOrder(order: any, sveaOrder: any) {
                       ? "Köp - Juice & Glow"
                       : ebookId === "soppboken"
                         ? "Köp - Den stora Soppboken"
-                        : ebookId === "julbord-2026"
-                          ? "Köp - Julbord 2026"
+                        : ebookId === "julbord-2026-egmont"
+                          ? "Köp - Julbord 2026 Egmont"
                           : "Köp - Brödboken";
 
           await Promise.race([

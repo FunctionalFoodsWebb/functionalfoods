@@ -127,7 +127,7 @@ function DownloadContent() {
               <h2 className="text-white font-semibold">
                 {ebookName || "Julbord – E-bok"}
               </h2>
-              <p className="text-gray-500 text-sm">PDF • 67 recept</p>
+              <p className="text-gray-500 text-sm">PDF • 50+ recept</p>
             </div>
           </div>
 

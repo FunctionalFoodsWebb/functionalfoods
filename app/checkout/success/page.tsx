@@ -216,7 +216,7 @@ function CheckoutSuccessContent() {
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
       id.includes("soppboken") ||
-      id.includes("julbord-2026") ||
+      id.includes("julbord-2026-egmont") ||
       name.includes("glutenfritt") ||
       name.includes("brodboken") ||
       name.includes("påskbuffé") ||
@@ -235,7 +235,6 @@ function CheckoutSuccessContent() {
       name.includes("stora soppboken") ||
       name.includes("soppboken") ||
       name.includes("julbord") ||
-      name.includes("julbord-2026") ||
       name.includes("e-bok")
     );
   });
@@ -255,7 +254,7 @@ function CheckoutSuccessContent() {
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
       id.includes("soppboken") ||
-      id.includes("julbord-2026") ||
+      id.includes("julbord-2026-egmont") ||
       name.includes("e-bok") ||
       name.includes("brodboken") ||
       name.includes("glutenfritt") ||
@@ -269,8 +268,7 @@ function CheckoutSuccessContent() {
       name.includes("juice & glow") ||
       name.includes("juice glow") ||
       name.includes("soppboken") ||
-      name.includes("julbord") ||
-      name.includes("julbord-2026")
+      name.includes("julbord")
     );
   });
 
@@ -289,7 +287,7 @@ function CheckoutSuccessContent() {
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
       id.includes("soppboken") ||
-      id.includes("julbord-2026") ||
+      id.includes("julbord-2026-egmont") ||
       name.includes("glutenfritt") ||
       name.includes("brodboken") ||
       name.includes("påskbuffé") ||
@@ -308,7 +306,6 @@ function CheckoutSuccessContent() {
       name.includes("stora soppboken") ||
       name.includes("soppboken") ||
       name.includes("julbord") ||
-      name.includes("julbord-2026") ||
       name.includes("e-bok")
     );
   });
@@ -350,10 +347,8 @@ function CheckoutSuccessContent() {
     ebookKey.includes("stora soppboken");
 
   const isJulbord2026 =
-    ebookKey.includes("julbord-2026") ||
-    ebookKey.includes("julbord") ||
-    ebookKey.includes("julbord 2026") ||
-    ebookKey.includes("Ulrikas julbord");
+    purchasedEbook?.id?.toLowerCase() === "julbord-2026-egmont" ||
+    purchasedEbook?.name?.toLowerCase().includes("julbord");
 
   const ebookDisplay = isPaskbuffe
     ? {

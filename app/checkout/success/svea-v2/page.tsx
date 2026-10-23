@@ -225,7 +225,7 @@ function SveaSuccessContent() {
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
       id.includes("soppboken") ||
-      id.includes("julbord-2026") ||
+      id === "julbord-2026-egmont" ||
       name.includes("e-bok") ||
       name.includes("brodboken") ||
       name.includes("glutenfritt") ||
@@ -243,7 +243,6 @@ function SveaSuccessContent() {
       name.includes("den stora Soppboken") ||
       name.includes("stora soppboken") ||
       name.includes("julbord") ||
-      name.includes("julbord-2026") ||
       name.includes("soppboken")
     );
   });
@@ -271,7 +270,7 @@ function SveaSuccessContent() {
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
       id.includes("soppboken") ||
-      id.includes("julbord-2026") ||
+      id === "julbord-2026-egmont" ||
       name.includes("glutenfritt") ||
       name.includes("brodboken") ||
       name.includes("påskbuffé") ||
@@ -290,7 +289,6 @@ function SveaSuccessContent() {
       name.includes("stora soppboken") ||
       name.includes("soppboken") ||
       name.includes("julbord") ||
-      name.includes("julbord-2026") ||
       name.includes("e-bok")
     );
   });
@@ -332,10 +330,8 @@ function SveaSuccessContent() {
     ebookKey.includes("stora soppboken");
 
   const isJulbord2026 =
-    ebookKey.includes("julbord") ||
-    ebookKey.includes("julbord-2026") ||
-    ebookKey.includes("julbord 2026") ||
-    ebookKey.includes("Ulrikas julbord");
+    purchasedEbook?.productId?.toLowerCase() === "julbord-2026-egmont" ||
+    purchasedEbook?.productName?.toLowerCase().includes("julbord");
 
   const ebookDisplay = isPaskbuffe
     ? {
