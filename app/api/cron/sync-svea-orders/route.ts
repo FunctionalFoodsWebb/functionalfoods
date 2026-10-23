@@ -364,6 +364,9 @@ async function completeOrder(order: any, sveaOrder: any) {
       ) {
         ebookId = "soppboken";
       }
+      if (n.includes("julbord")) {
+        ebookId = "julbord-2026-egmont";
+      }
 
       await prisma.ebookDownload.create({
         data: {
@@ -402,6 +405,10 @@ async function completeOrder(order: any, sveaOrder: any) {
         downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
       }
 
+      if (ebookId === "julbord-2026-egmont") {
+        downloadUrl = `${baseUrl}/e-bocker/julbord-2026-egmont/ladda-ner?token=${downloadToken}`;
+      }
+
       await emailService.sendEbookDownloadEmail({
         email: customerEmail,
         name: customerName,
@@ -435,7 +442,9 @@ async function completeOrder(order: any, sveaOrder: any) {
                       ? "Köp - Juice & Glow"
                       : ebookId === "soppboken"
                         ? "Köp - Den stora Soppboken"
-                        : "Köp - Brödboken";
+                        : ebookId === "julbord-2026-egmont"
+                          ? "Köp - Julbord 2026 Egmont"
+                          : "Köp - Brödboken";
 
           await Promise.race([
             mailchimpMarketing.addSubscriber({

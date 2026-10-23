@@ -271,7 +271,16 @@ export async function POST(request: NextRequest) {
     await prisma.$disconnect();
   }
 }
+function getOriginalProductId(metadata: any, itemName: string): string | null {
+  const metadataItems = Array.isArray(metadata?.items) ? metadata.items : [];
 
+  const matchingItem = metadataItems.find(
+    (item: any) =>
+      item.name?.toLowerCase().trim() === itemName.toLowerCase().trim(),
+  );
+
+  return matchingItem?.id || null;
+}
 async function handleOrderCompleted(
   webhookData: ReturnType<typeof normalizeWebhookPayload>,
 ) {
@@ -686,7 +695,11 @@ async function handleOrderCompleted(
             customerEmail: updatedOrder.user.email,
             customerName: updatedOrder.user.name || undefined,
             items: updatedOrder.items.map((item) => ({
-              id: item.courseId || item.id,
+              id:
+                item.type === "book"
+                  ? getOriginalProductId(updatedOrder.metadata, item.name) ||
+                    item.id
+                  : item.courseId || item.id,
               name: item.name,
               price: item.price,
               quantity: item.quantity,
@@ -1011,6 +1024,10 @@ async function handleOrderCompleted(
             if (bookItems.length > 0) {
               for (const book of bookItems) {
                 const n = book.name.toLowerCase();
+                const originalProductId = getOriginalProductId(
+                  updatedOrder.metadata,
+                  book.name,
+                );
 
                 let ebookId = "brodboken-2026";
 
@@ -1054,6 +1071,8 @@ async function handleOrderCompleted(
                   n.includes("soppboken")
                 ) {
                   ebookId = "soppboken";
+                } else if (originalProductId === "julbord-2026-egmont") {
+                  ebookId = "julbord-2026-egmont";
                 }
 
                 // Reuse existing token if it already exists for this order + ebook
@@ -1110,6 +1129,9 @@ async function handleOrderCompleted(
                 }
                 if (ebookId === "soppboken") {
                   downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
+                }
+                if (ebookId === "julbord-2026-egmont") {
+                  downloadUrl = `${baseUrl}/e-bocker/julbord-2026-egmont/ladda-ner?token=${downloadToken}`;
                 }
 
                 await emailService.sendEbookDownloadEmail({
@@ -1172,7 +1194,9 @@ async function handleOrderCompleted(
                                 ? "Köp - Juice & Glow"
                                 : ebookId === "soppboken"
                                   ? "Köp - Den stora Soppboken"
-                                  : "Köp - Brödboken";
+                                  : ebookId === "julbord-2026-egmont"
+                                    ? "Köp - Julbord 2026 Egmont"
+                                    : "Köp - Brödboken";
 
                     await Promise.race([
                       mailchimpMarketing.addSubscriber({

@@ -255,6 +255,13 @@ export async function POST(req: NextRequest) {
         type: "book",
         vatRate: 0.06,
       },
+      "julbord-2026-egmont": {
+        id: "julbord-2026-egmont",
+        name: "Julbord – E-bok",
+        price: 121.7,
+        type: "book",
+        vatRate: 0.06,
+      },
     };
 
     // Add book products to productMap
@@ -338,9 +345,10 @@ export async function POST(req: NextRequest) {
 
         validatedItems.push({
           ...item,
-          price: effectivePrice, // Use server-authoritative campaign-aware price
-          name: product.name, // Use name from database
-          vatRate: product.vatRate || 0.25, // Use product VAT rate or default 25%
+          id: product.id,
+          price: effectivePrice,
+          name: product.name,
+          vatRate: product.vatRate || 0.25,
           courseId: item.type === "course" ? product.id : null,
         });
       } catch (itemError) {
@@ -727,6 +735,9 @@ export async function POST(req: NextRequest) {
       ) {
         return "EBOOK-SOPPBOKEN";
       }
+      if (item.id === "julbord-2026-egmont") {
+        return "EBOOK-JULBORD-2026-EGMONT";
+      }
 
       return item.id; // fallback
     };
@@ -769,7 +780,9 @@ export async function POST(req: NextRequest) {
                 ? "Sota Godsaker E-bok"
                 : item.id === "halsosamma-frukostar"
                   ? "Halsosamma Frukostar E-bok"
-                  : item.name,
+                  : item.id === "julbord-2026-egmont"
+                    ? "Julbord E-bok"
+                    : item.name,
           quantity: item.quantity * 100, // Quantity in minor units: 100 = 1 unit
           unitPrice: priceInOre, // Pris INKLUSIVE moms i ÖRE (vatPercent används bara för momsrapportering)
           vatPercent: sveaVatPercent, // VAT in Svea format (600 = 6%, 2500 = 25%)
@@ -1084,6 +1097,9 @@ export async function POST(req: NextRequest) {
             ) {
               ebookId = "soppboken";
             }
+            if (book.id === "julbord-2026-egmont") {
+              ebookId = "julbord-2026-egmont";
+            }
 
             // Optional: avoid duplicates if route is retried
             const existing = await prisma.ebookDownload.findFirst({
@@ -1134,6 +1150,9 @@ export async function POST(req: NextRequest) {
             }
             if (ebookId === "soppboken") {
               downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
+            }
+            if (ebookId === "julbord-2026-egmont") {
+              downloadUrl = `${baseUrl}/e-bocker/julbord-2026-egmont/ladda-ner?token=${downloadToken}`;
             }
 
             await emailService.sendEbookDownloadEmail({
@@ -1197,7 +1216,9 @@ export async function POST(req: NextRequest) {
         if (mailchimpMarketing.isConfigured()) {
           const productNames = validatedItems
             .filter((item) => item.type === "course" || item.type === "book")
-            .map((item) => item.name);
+            .map((item) =>
+              item.id === "julbord-2026-egmont" ? item.id : item.name,
+            );
           const nameParts = (customerName || "").split(" ");
           const firstName = nameParts[0] || "";
           const lastName = nameParts.slice(1).join(" ") || "";

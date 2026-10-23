@@ -1,13 +1,13 @@
 import { generateEbookMetadata } from "@/app/lib/ebook-seo";
-import JulbordPageClient from "./page.client";
+import Julbord2026EgmontPageClient from "./page.client";
 
 export async function generateMetadata() {
   return generateEbookMetadata({
-    pageId: "julbord",
-    url: "/e-bocker/julbord",
+    pageId: "julbord-2026-egmont",
+    url: "/e-bocker/julbord-2026-egmont",
     fallbackTitle: "Julbord - E-bok",
     fallbackDescription: "Ulrikas julbord",
-    fallbackImage: "/paskbuffe-square.jpg",
+    fallbackImage: "/julbord-2026-square.png",
     keywords: [
       "julbord",
       "julmat",
@@ -18,6 +18,6 @@ export async function generateMetadata() {
   });
 }
 
-export default function JulbordPage() {
-  return <JulbordPageClient />;
+export default function Julbord2026EgmontPage() {
+  return <Julbord2026EgmontPageClient />;
 }

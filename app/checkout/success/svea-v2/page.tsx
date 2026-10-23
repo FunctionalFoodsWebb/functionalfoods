@@ -225,6 +225,7 @@ function SveaSuccessContent() {
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
       id.includes("soppboken") ||
+      id === "julbord-2026-egmont" ||
       name.includes("e-bok") ||
       name.includes("brodboken") ||
       name.includes("glutenfritt") ||
@@ -241,6 +242,7 @@ function SveaSuccessContent() {
       name.includes("juice & glow") ||
       name.includes("den stora Soppboken") ||
       name.includes("stora soppboken") ||
+      name.includes("julbord") ||
       name.includes("soppboken")
     );
   });
@@ -268,6 +270,7 @@ function SveaSuccessContent() {
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
       id.includes("soppboken") ||
+      id === "julbord-2026-egmont" ||
       name.includes("glutenfritt") ||
       name.includes("brodboken") ||
       name.includes("påskbuffé") ||
@@ -285,6 +288,7 @@ function SveaSuccessContent() {
       name.includes("den stora soppboken") ||
       name.includes("stora soppboken") ||
       name.includes("soppboken") ||
+      name.includes("julbord") ||
       name.includes("e-bok")
     );
   });
@@ -324,6 +328,10 @@ function SveaSuccessContent() {
     ebookKey.includes("den-stora-soppboken") ||
     ebookKey.includes("den stora soppboken") ||
     ebookKey.includes("stora soppboken");
+
+  const isJulbord2026 =
+    purchasedEbook?.productId?.toLowerCase() === "julbord-2026-egmont" ||
+    purchasedEbook?.productName?.toLowerCase().includes("julbord");
 
   const ebookDisplay = isPaskbuffe
     ? {
@@ -383,15 +391,24 @@ function SveaSuccessContent() {
                   description: "Smakrika och färgstarka soppor",
                   enjoyTitle: "Njut av dina smakrika soppor!",
                 }
-              : {
-                  title: "Baka Glutenfritt – E-bok av Ulrika Davidsson",
-                  image: "/baka-glutenfritt.png",
-                  alt: "Baka Glutenfritt E-bok",
-                  subtitle: "PDF-format • 26 recept",
-                  description:
-                    "Upptäck Ulrikas väg till mer hälsosam brödbakning.",
-                  enjoyTitle: "Njut av att baka glutenfritt!",
-                };
+              : isJulbord2026
+                ? {
+                    title: "Julbord – E-bok av Ulrika Davidsson",
+                    image: "/julbord-2026-omslag.png",
+                    alt: "Julbord E-bok",
+                    subtitle: "PDF-format • 50+ recept",
+                    description: "Godare julmat som får dig att må bra.",
+                    enjoyTitle: "Njut av din julmat!",
+                  }
+                : {
+                    title: "Baka Glutenfritt – E-bok av Ulrika Davidsson",
+                    image: "/baka-glutenfritt.png",
+                    alt: "Baka Glutenfritt E-bok",
+                    subtitle: "PDF-format • 26 recept",
+                    description:
+                      "Upptäck Ulrikas väg till mer hälsosam brödbakning.",
+                    enjoyTitle: "Njut av att baka glutenfritt!",
+                  };
 
   console.log("SVEA SUCCESS orderDetails:", orderDetails);
   console.log("SVEA SUCCESS purchasedEbook:", purchasedEbook);
@@ -400,6 +417,7 @@ function SveaSuccessContent() {
   console.log("SVEA SUCCESS isSotaGodsaker:", isSotaGodsaker);
   console.log("SVEA SUCCESS isHalsosammaFrukostar:", isHalsosammaFrukostar);
   console.log("SVEA SUCCESS isSoppboken:", isSoppboken);
+  console.log("SVEA SUCCESS isJulbord2026:", isJulbord2026);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">

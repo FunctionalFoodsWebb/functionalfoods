@@ -48,10 +48,10 @@ const KNOWN_PAGES = [
     path: "/e-bocker/soppboken",
   },
   {
-    pageId: "julbord",
+    pageId: "julbord-2026-egmont",
     name: "Julbord E-bok",
-    description: "E-boken som säljs på /e-bocker/julbord",
-    path: "/e-bocker/julbord",
+    description: "E-boken som säljs på /e-bocker/julbord-2026-egmont",
+    path: "/e-bocker/julbord-2026-egmont",
   },
   {
     pageId: "boken",

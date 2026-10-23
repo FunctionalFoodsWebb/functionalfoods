@@ -216,6 +216,7 @@ function CheckoutSuccessContent() {
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
       id.includes("soppboken") ||
+      id.includes("julbord-2026-egmont") ||
       name.includes("glutenfritt") ||
       name.includes("brodboken") ||
       name.includes("påskbuffé") ||
@@ -233,6 +234,7 @@ function CheckoutSuccessContent() {
       name.includes("den stora Soppboken") ||
       name.includes("stora soppboken") ||
       name.includes("soppboken") ||
+      name.includes("julbord") ||
       name.includes("e-bok")
     );
   });
@@ -252,6 +254,7 @@ function CheckoutSuccessContent() {
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
       id.includes("soppboken") ||
+      id.includes("julbord-2026-egmont") ||
       name.includes("e-bok") ||
       name.includes("brodboken") ||
       name.includes("glutenfritt") ||
@@ -264,7 +267,8 @@ function CheckoutSuccessContent() {
       name.includes("halsosamma frukostar") ||
       name.includes("juice & glow") ||
       name.includes("juice glow") ||
-      name.includes("soppboken")
+      name.includes("soppboken") ||
+      name.includes("julbord")
     );
   });
 
@@ -283,6 +287,7 @@ function CheckoutSuccessContent() {
       id.includes("halsosamma-frukostar") ||
       id.includes("juice-glow") ||
       id.includes("soppboken") ||
+      id.includes("julbord-2026-egmont") ||
       name.includes("glutenfritt") ||
       name.includes("brodboken") ||
       name.includes("påskbuffé") ||
@@ -300,6 +305,7 @@ function CheckoutSuccessContent() {
       name.includes("den stora Soppboken") ||
       name.includes("stora soppboken") ||
       name.includes("soppboken") ||
+      name.includes("julbord") ||
       name.includes("e-bok")
     );
   });
@@ -339,6 +345,10 @@ function CheckoutSuccessContent() {
     ebookKey.includes("soppboken") ||
     ebookKey.includes("den stora Soppboken") ||
     ebookKey.includes("stora soppboken");
+
+  const isJulbord2026 =
+    purchasedEbook?.id?.toLowerCase() === "julbord-2026-egmont" ||
+    purchasedEbook?.name?.toLowerCase().includes("julbord");
 
   const ebookDisplay = isPaskbuffe
     ? {
@@ -398,15 +408,24 @@ function CheckoutSuccessContent() {
                   description: "Smakrika och färgstarka soppor",
                   enjoyTitle: "Njut av dina smakrika soppor!",
                 }
-              : {
-                  title: "Baka Glutenfritt – E-bok",
-                  image: "/baka-glutenfritt.png",
-                  alt: "Baka Glutenfritt E-bok",
-                  subtitle: "PDF-format • 26 recept",
-                  description:
-                    "Upptäck Ulrikas väg till mer hälsosam brödbakning.",
-                  enjoyTitle: "Njut av glutenfritt!",
-                };
+              : isJulbord2026
+                ? {
+                    title: "Julbord – E-bok",
+                    image: "/julbord-2026-omslag.png",
+                    alt: "Julbord E-bok",
+                    subtitle: "PDF-format • 50+ recept",
+                    description: "Godare julmat som får dig att må bra.",
+                    enjoyTitle: "Njut av din julmat!",
+                  }
+                : {
+                    title: "Baka Glutenfritt – E-bok",
+                    image: "/baka-glutenfritt.png",
+                    alt: "Baka Glutenfritt E-bok",
+                    subtitle: "PDF-format • 26 recept",
+                    description:
+                      "Upptäck Ulrikas väg till mer hälsosam brödbakning.",
+                    enjoyTitle: "Njut av glutenfritt!",
+                  };
 
   // E-book only purchase - show special confirmation
   if (onlyEbooks) {

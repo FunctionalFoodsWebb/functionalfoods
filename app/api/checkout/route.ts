@@ -186,6 +186,14 @@ export async function POST(req: NextRequest) {
           type: "book" as const,
           vatRate: 0.06,
         },
+        {
+          id: "julbord-2026-egmont",
+          name: "Julbord – E-bok av Ulrika Davidsson",
+          price: 121.7,
+          basePrice: 121.7,
+          type: "book" as const,
+          vatRate: 0.06,
+        },
       ];
 
       // Add book products to map

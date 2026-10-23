@@ -777,6 +777,8 @@ export async function POST(req: NextRequest) {
                       n.includes("soppboken")
                     ) {
                       ebookId = "soppboken";
+                    } else if (n.includes("julbord")) {
+                      ebookId = "julbord-2026-egmont";
                     }
 
                     // Reuse token if webhook/another completion path already created one
@@ -826,6 +828,8 @@ export async function POST(req: NextRequest) {
                       downloadUrl = `${baseUrl}/e-bocker/juice-glow/ladda-ner?token=${downloadToken}`;
                     } else if (ebookId === "soppboken") {
                       downloadUrl = `${baseUrl}/e-bocker/soppboken/ladda-ner?token=${downloadToken}`;
+                    } else if (ebookId === "julbord-2026-egmont") {
+                      downloadUrl = `${baseUrl}/e-bocker/julbord-2026-egmont/ladda-ner?token=${downloadToken}`;
                     }
 
                     await emailService.sendEbookDownloadEmail({
