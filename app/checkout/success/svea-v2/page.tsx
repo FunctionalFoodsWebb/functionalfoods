@@ -394,7 +394,7 @@ function SveaSuccessContent() {
               : isJulbord2026
                 ? {
                     title: "Julbord – E-bok av Ulrika Davidsson",
-                    image: "/julbord-2026-samlingssida.png",
+                    image: "/julbord-2026-omslag.png",
                     alt: "Julbord E-bok",
                     subtitle: "PDF-format • 50+ recept",
                     description: "Godare julmat som får dig att må bra.",
